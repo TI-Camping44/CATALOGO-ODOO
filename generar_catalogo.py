@@ -154,10 +154,10 @@ def main():
             categorias_datos[hoja].append(p)
             categorias_datos["Todo"].append(p)
 
-        print("Armando interfaz web híbrida ULTRA RÁPIDA con seguros PDF...")
+        print("Armando interfaz web híbrida ULTRA RÁPIDA con PDF Seguro...")
         logo_html = f"data:image/png;base64,{logo_base64}" if logo_base64 else ""
         
-        html = """<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:30px;}.stock-rojo{background-color:#FEE2E2!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#D1FAE5!important;color:#065F46;}/* Sidebar PC */.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.desktop-sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:#fff;border-right:1px solid #e5e7eb;padding:20px 15px;box-shadow:2px 0 10px rgba(0,0,0,0.03);scrollbar-width:thin;}/* Botones Filtro */.btn-filtro{color:#081226;font-size:0.92rem;padding:9px 12px;font-weight:600;border-radius:30px;border:1px solid #dee2e6;text-align:left;width:100%;cursor:pointer;background:#fff;transition:0.2s;margin-bottom:6px;}.nav-scroll-container .btn-filtro{width:auto;text-align:center;margin-bottom:0;}.btn-filtro.active{background-color:#081226;color:white;border-color:#081226;}/* Tarjeta Optimizada */.tarjeta-contenedor{content-visibility:auto;contain-intrinsic-size:350px;}.producto-img{width:100%;height:200px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:12px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:1px solid #e5e7eb;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.08)!important;}.price-box{background:#f9fafb;border-radius:8px;padding:6px 4px;font-size:0.82rem;text-align:center;border:1px solid #e5e7eb;height:100%;display:flex;flex-direction:column;justify-content:center;}.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}@media print{body{background:#fff;padding:0;}.desktop-sidebar,#buscadorWeb,.btn-back-to-top,.row-controles,.nav-scroll-container,.row-encabezado-web{display:none!important;}.row{display:block!important;}#print-section{display:block!important;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:11px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><button onclick='window.scrollTo({top:0,behavior:"smooth"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid'><div class='row'><div class='col-lg-2 d-none d-lg-block desktop-sidebar'><div class='text-center mb-4'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height:50px;max-width:100%;object-fit:contain;'><h6 class='fw-bold mt-3 text-dark' style='letter-spacing:-0.5px;'>Catálogo Mayorista</h6></div><ul class='nav flex-column gap-1'>"""
+        html = """<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:30px;}.stock-rojo{background-color:#FEE2E2!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#D1FAE5!important;color:#065F46;}/* Sidebar PC */.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.desktop-sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:#fff;border-right:1px solid #e5e7eb;padding:20px 15px;box-shadow:2px 0 10px rgba(0,0,0,0.03);scrollbar-width:thin;}/* Botones Filtro */.btn-filtro{color:#081226;font-size:0.92rem;padding:9px 12px;font-weight:600;border-radius:30px;border:1px solid #dee2e6;text-align:left;width:100%;cursor:pointer;background:#fff;transition:0.2s;margin-bottom:6px;}.nav-scroll-container .btn-filtro{width:auto;text-align:center;margin-bottom:0;}.btn-filtro.active{background-color:#081226;color:white;border-color:#081226;}/* Tarjeta Optimizada */.tarjeta-contenedor{content-visibility:auto;contain-intrinsic-size:350px;}.producto-img{width:100%;height:200px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:12px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:1px solid #e5e7eb;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.08)!important;}.price-box{background:#f9fafb;border-radius:8px;padding:6px 4px;font-size:0.82rem;text-align:center;border:1px solid #e5e7eb;height:100%;display:flex;flex-direction:column;justify-content:center;}.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}/* CSS PARA IMPRESIÓN PERFECTA */@media print{body{background:#fff;padding:0;}#web-app{display:none!important;}#print-placeholder{display:block!important;width:100%;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:12px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><div id="web-app"><button onclick='window.scrollTo({top:0,behavior:"smooth"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid'><div class='row'><div class='col-lg-2 d-none d-lg-block desktop-sidebar'><div class='text-center mb-4'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height:50px;max-width:100%;object-fit:contain;'><h6 class='fw-bold mt-3 text-dark' style='letter-spacing:-0.5px;'>Catálogo Mayorista</h6></div><ul class='nav flex-column gap-1'>"""
         
         html = html.replace('##LOGO_HTML##', logo_html)
         
@@ -225,12 +225,13 @@ def main():
                 
             html += "</div></div></div></div>"
 
-        # JS CON LIMITADOR DE SEGURIDAD PARA EL PDF Y DELAY ASÍNCRONO
-        footer_html = """</div></div></div></div><div id='print-placeholder'></div>
+        # JS CON EXTRACCIÓN BLINDADA (TEXTCONTENT EN LUGAR DE INNERTEXT) Y DISPLAY NONE PARA LA WEB
+        footer_html = """</div></div></div></div></div><div id='print-placeholder'></div>
         <script>
+            // Usamos textContent porque innerText falla si el elemento está oculto por optimización de memoria
             const arrayTarjetas = Array.from(document.querySelectorAll('.tarjeta-contenedor')).map(t => ({
                 el: t,
-                texto: t.innerText.toUpperCase(),
+                texto: t.textContent.toUpperCase(),
                 hoja: t.getAttribute('data-hoja')
             }));
 
@@ -281,7 +282,6 @@ def main():
                 }
             };
 
-            // FUNCIÓN PDF SEGURA Y ASÍNCRONA
             function generarPDFCotizacion() {
                 try {
                     let tarifa = document.getElementById('selectTarifaPDF').value;
@@ -292,13 +292,11 @@ def main():
                     
                     let visibles = arrayTarjetas.filter(t => t.el.style.display !== 'none');
                     
-                    // FRENO DE SEGURIDAD PARA QUE NO EXPLOTE LA TABLET
                     if (visibles.length > 400) {
                         alert('⚠️ ESTÁS INTENTANDO EXPORTAR ' + visibles.length + ' PRODUCTOS.\\n\\nEl navegador de tu tablet se congelará al armar un PDF tan gigante con tantas fotos.\\n\\n✅ SOLUCIÓN:\\nPor favor, seleccioná una categoría al costado (ej: "ASG" o "Municiones") o usá el buscador para filtrar los productos, y luego volvé a darle al botón de PDF para enviárselo a tu cliente.');
                         return;
                     }
 
-                    // Botón en modo de carga
                     let btnPdf = document.getElementById('btnGenerarPDF');
                     let originalText = btnPdf.innerHTML;
                     btnPdf.innerHTML = '⏳ Cargando...';
@@ -338,17 +336,18 @@ def main():
                             imgHtml = '<img src="' + imgEl.src + '" class="print-img-pdf">';
                         }
                         
+                        // Uso de textContent para extraer la info aunque la UI lo tenga apagado
                         let codEl = t.querySelector('[data-campo="codigo"]');
-                        let cod = codEl ? codEl.innerText : '-';
+                        let cod = codEl ? codEl.textContent.trim() : '-';
                         
                         let stockEl = t.querySelector('[data-campo="stock"]');
-                        let stock = stockEl ? stockEl.innerText.replace('Stock: ', '') : '0';
+                        let stock = stockEl ? stockEl.textContent.replace('Stock:', '').trim() : '0';
                         
                         let nombreEl = t.querySelector('[data-campo="nombre"]');
-                        let nombre = nombreEl ? nombreEl.innerText : 'Producto';
+                        let nombre = nombreEl ? nombreEl.textContent.trim() : 'Producto';
                         
                         let marcaEl = t.querySelector('[data-campo="marca"]');
-                        let marca = marcaEl ? marcaEl.innerText : 'Sin Marca';
+                        let marca = marcaEl ? marcaEl.textContent.trim() : 'Sin Marca';
                         
                         htmlPdf += '<tr>';
                         htmlPdf += '<td style="text-align:center;">' + imgHtml + '</td>';
@@ -367,7 +366,6 @@ def main():
                     let placeholder = document.getElementById('print-placeholder');
                     placeholder.innerHTML = htmlPdf;
                     
-                    // Asincronismo para evitar que la UI se cuelgue al armar la tabla pesada
                     setTimeout(() => {
                         window.print();
                         placeholder.innerHTML = '';
