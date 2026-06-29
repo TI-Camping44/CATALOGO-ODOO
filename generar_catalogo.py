@@ -287,7 +287,7 @@ def main():
 
                 let html = '';
                 items.forEach(p => {
-                    let imgTag = p.i ? `<img src="data:image/jpeg;base64,${p.i}" class="producto-img" loading="lazy">` : `<div class="producto-img d-flex align-items-center justify-content-center text-muted border-bottom"><small>Sin foto</small></div>`;
+                    let imgTag = p.i ? `<img src="data:image/png;base64,${p.i}" class="producto-img" loading="lazy">` : `<div class="producto-img d-flex align-items-center justify-content-center text-muted border-bottom"><small>Sin foto</small></div>`;
                     let stockClass = p.s <= 5 ? 'stock-rojo' : (p.s <= 20 ? 'stock-amarillo' : 'stock-verde');
                     
                     let preciosHtml = '';
@@ -401,7 +401,7 @@ def main():
                 "APOLO": "DIST 1: Monto Mínimo Gs. 10.000.000  |  DIST 2: Monto Mínimo Gs. 20.000.000"
             };
 
-            // GENERADOR DE PDF NATIVO DESDE CERO (SIN IMPRESORA)
+            // GENERADOR DE PDF NATIVO CON CONTROL DE PROPORCIÓN DEL LOGO
             function descargarPDFNativo() {
                 let checkboxes = document.querySelectorAll('.check-tarifa-pdf:checked');
                 let tarifasSeleccionadas = Array.from(checkboxes).map(cb => cb.value);
@@ -421,7 +421,6 @@ def main():
                 btnPdf.innerHTML = '⏳ Procesando Archivo...';
                 btnPdf.disabled = true;
 
-                // Pequeño timeout para que el botón muestre "Procesando" antes de trabar el hilo
                 setTimeout(() => {
                     try {
                         const { jsPDF } = window.jspdf;
@@ -429,16 +428,35 @@ def main():
                         let mostrarStock = document.getElementById('chkMostrarStock').checked;
                         let logoBase64 = '##LOGO_HTML##';
                         
-                        // CABECERA DEL PDF
+                        // CABECERA DEL PDF CON LÓGICA DE PROPORCIÓN PARA EL LOGO
+                        let textX = 14;
                         if (logoBase64.length > 100) {
-                            doc.addImage(logoBase64, 'PNG', 14, 10, 40, 15);
+                            try {
+                                let imgProps = doc.getImageProperties(logoBase64);
+                                let imgRatio = imgProps.height / imgProps.width;
+                                let targetWidth = 45; // Ancho máximo
+                                let targetHeight = targetWidth * imgRatio;
+                                
+                                // Si el logo queda muy alto, lo achicamos para no invadir la hoja
+                                if (targetHeight > 18) {
+                                    targetHeight = 18;
+                                    targetWidth = targetHeight / imgRatio;
+                                }
+                                
+                                doc.addImage(logoBase64, 'PNG', 14, 10, targetWidth, targetHeight);
+                                textX = 14 + targetWidth + 5; // Acomodamos el texto para que no se pise con la foto
+                            } catch(e) {
+                                doc.addImage(logoBase64, 'PNG', 14, 10, 40, 15);
+                                textX = 60;
+                            }
                         }
+                        
                         doc.setFontSize(16);
                         doc.setTextColor(8, 18, 38);
-                        doc.text("CAMPING 44", 60, 16);
+                        doc.text("CAMPING 44", textX, 16);
                         doc.setFontSize(10);
                         doc.setTextColor(100, 100, 100);
-                        doc.text("Cotización de Productos", 60, 22);
+                        doc.text("Cotización de Productos", textX, 22);
                         
                         doc.setFontSize(9);
                         doc.setTextColor(8, 18, 38);
@@ -493,7 +511,7 @@ def main():
                             preciosFila.forEach(precio => row.push(precio));
                             
                             filas.push(row);
-                            imagenesFila.push(p.i); // Guardamos la foto aparte para dibujarla
+                            imagenesFila.push(p.i);
                         });
 
                         // DIBUJAR TABLA
@@ -511,11 +529,10 @@ def main():
                             },
                             bodyStyles: { minCellHeight: 20 },
                             didDrawCell: function(data) {
-                                // Acá inyectamos la imagen adentro de la celda de la tabla
                                 if (data.column.index === 0 && data.cell.section === 'body') {
                                     let imgStr = imagenesFila[data.row.index];
                                     if (imgStr) {
-                                        doc.addImage("data:image/jpeg;base64," + imgStr, 'JPEG', data.cell.x + 2, data.cell.y + 2, 16, 16);
+                                        doc.addImage("data:image/png;base64," + imgStr, 'PNG', data.cell.x + 2, data.cell.y + 2, 16, 16);
                                     } else {
                                         doc.setFontSize(6);
                                         doc.setTextColor(150);
@@ -525,7 +542,7 @@ def main():
                             }
                         });
 
-                        // FORZAR LA DESCARGA NATIVA
+                        // DESCARGA AUTOMÁTICA
                         doc.save("Cotizacion_Camping44_" + stateCat.replace(/[^a-zA-Z0-9]/g, "") + ".pdf");
 
                         btnPdf.innerHTML = originalText;
@@ -548,7 +565,7 @@ def main():
             f.write(html)
             
         peso_final = os.path.getsize("index.html") / (1024 * 1024)
-        print(f"¡Catálogo VIRTUAL con Descarga PDF NATIVA optimizado con éxito! Peso: {peso_final:.2f} MB")
+        print(f"¡Catálogo VIRTUAL con Logo Proporcional optimizado con éxito! Peso: {peso_final:.2f} MB")
 
     except Exception as e:
         print(f"Error general: {e}")
