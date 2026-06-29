@@ -70,7 +70,6 @@ def main():
         maygs_id = next((pl['id'] for pl in pricelists if pl['name_clean'] == 'MAYGS'), None)
         categorias_datos = {}
         
-        # AGREGADO: "Todo" es ahora la primera opción de la lista
         orden_hojas = [
             "Todo", "Municiones", "Armas", "Cargadores", "ASG", "TSS", "CROSMAN", "UMAREX",
             "DOBERMAN RIFLES", "DOBERMAN MOCHILAS", "DOBERMAN BOTAS", "DOBERMAN LINTERNAS", "DOBERMAN BALINES",
@@ -80,7 +79,7 @@ def main():
         ]
         for hoja in orden_hojas: categorias_datos[hoja] = []
 
-        print("Procesando y clasificando catálogo visual...")
+        print("Procesando y clasificando catálogo premium...")
         for p in products:
             ref = (p.get('default_code') or "").upper().strip()
             if ref.startswith("AVE") or ref.startswith("NSE"): continue
@@ -150,22 +149,27 @@ def main():
                 p_precios.append(p_val)
             p['lista_precios_vals'] = p_precios
 
-            # Guardar en su categoría y TAMBIÉN en la pestaña global "Todo"
             categorias_datos[hoja].append(p)
             categorias_datos["Todo"].append(p)
 
-        # 5. ESTRUCTURA HTML MINIFICADA EN FORMATO CATÁLOGO (CARDS GRID)
-        print("Armando interfaz visual de catálogo...")
-        html = "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'></script><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;}.stock-rojo{background-color:#FECACA!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#BBF7D0!important;color:#166534;}.nav-pills .nav-link{color:#081226;font-size:1.1rem;padding:10px 20px;font-weight:500;border-radius:30px;border:1px solid #dee2e6;}.nav-pills .nav-link.active{background-color:#081226;color:white;border-color:#081226;}/* Imagen de catálogo gigante */.producto-img{width:100%;height:230px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:16px;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;background:#fff;border:none;height:100%;}.card-producto:hover{transform:translateY(-5px);box-shadow:0 12px 24px rgba(0,0,0,0.15)!important;}.price-box{background:#f8f9fa;border-radius:8px;padding:5px;font-size:0.85rem;text-align:center;border:1px solid #e9ecef;}</style></head><body><div class='container-fluid py-4'><h2 class='fw-bold mb-4 text-center' style='color:#081226;'>Catálogo de Precios - Camping 44</h2><div class='row justify-content-center mb-4'><div class='col-md-10 col-lg-8'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4 py-3' placeholder=' Tapá acá para buscar en TODO el catálogo...' style='font-size:1.2rem;'></div></div><ul class='nav nav-pills mb-4 justify-content-center flex-wrap gap-2' id='pills-tab' role='tablist'>"
+        # 5. ESTRUCTURA HTML DEFINITIVA (Con Logo integrado en Web y PDF)
+        print("Armando interfaz de catálogo con logo...")
+        html = "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'></script><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:60px;}.stock-rojo{background-color:#FECACA!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#BBF7D0!important;color:#166534;}.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.nav-pills .nav-link{color:#081226;font-size:1.05rem;padding:8px 18px;font-weight:500;border-radius:30px;border:1px solid #dee2e6;display:inline-block;}.nav-pills .nav-link.active{background-color:#081226;color:white;border-color:#081226;}/* Imagen de catálogo gigante */.producto-img{width:100%;height:220px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:16px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:none;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.12)!important;}.price-box{background:#f8f9fa;border-radius:8px;padding:5px;font-size:0.82rem;text-align:center;border:1px solid #e9ecef;}/* Botón volver arriba */.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}/* Reglas especiales exclusivas para cuando se genera el PDF */@media print{body{background:#fff;padding:0;}/* Oculta toda la web interactiva y el encabezado web */#buscadorWeb,#pills-tab,.btn-back-to-top,.row-controles,.nav-scroll-container,.row-encabezado-web{display:none!important;}.tab-pane{display:block!important;opacity:1!important;}.row{display:block!important;}#print-section{display:block!important;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:11px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><button onclick='window.scrollTo({top:0,behavior:\"smooth\"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid py-3'><div class='row align-items-center mb-4 row-encabezado-web'><div class='col-4 text-start'><img src='LOCOC44.png' alt='Camping 44 Logo' style='height: 60px;'></div><div class='col-8 text-center'><h3 class='fw-bold mb-0 text-center' style='color:#081226;'>Catálogo de Precios - Camping 44</h3></div></div><div class='row row-controles g-2 justify-content-center mb-3'><div class='col-12 col-md-5'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1.1rem;'></div><div class='col-7 col-md-3'><select id='selectTarifaPDF' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value=''>-- Seleccionar Tarifa para PDF --</option>"
+        
+        # Cargar las opciones del PDF de forma dinámica
+        for pl in pricelists:
+            html += f"<option value='{pl['name_clean']}'>Exportar Tarifa {pl['name_clean']}</option>"
+            
+        html += "</select></div><div class='col-5 col-md-2'><button onclick='generarPDFCotizacion()' class='btn btn-lg btn-danger shadow-sm rounded-pill w-100 fw-bold' style='font-size:1rem;'>📄 PDF</button></div></div><div class='position-sticky top-0 bg-light z-3 shadow-sm rounded-4 mb-3 nav-scroll-container'><ul class='nav nav-pills flex-nowrap' id='pills-tab' role='tablist'>"
         
         first_tab = True
         for hoja in orden_hojas:
-            if not categorias_datos[hoja]: continue
+            if not pandas_clone := categorias_datos[hoja]: continue
             active_class = "active" if first_tab else ""
-            html += f"<li class='nav-item' role='presentation'><button class='nav-link {active_class}' id='pills-{hoja.replace(' ', '').replace('.','')}-tab' data-bs-toggle='pill' data-bs-target='#pills-{hoja.replace(' ', '').replace('.','')}' type='button' role='tab'>{hoja} ({len(categorias_datos[hoja])})</button></li>"
+            html += f"<li class='nav-item' role='presentation'><button class='nav-link {active_class}' id='pills-{hoja.replace(' ', '').replace('.','')}-tab' data-bs-toggle='pill' data-bs-target='#pills-{hoja.replace(' ', '').replace('.','')}' type='button' role='tab' data-hoja-name='{hoja}'>{hoja} ({len(pandas_clone)})</button></li>"
             first_tab = False
 
-        html += "</ul><div class='tab-content p-2' id='pills-tabContent'>"
+        html += "</ul></div><div class='tab-content p-1' id='pills-tabContent'>"
 
         first_content = True
         for hoja in orden_hojas:
@@ -173,9 +177,8 @@ def main():
             if not productos_hoja: continue
             
             active_class = "show active" if first_content else ""
-            html += f"<div class='tab-pane fade {active_class}' id='pills-{hoja.replace(' ', '').replace('.','')}' role='tabpanel'><div class='row g-3' style='max-height:80vh;overflow-y:auto;padding:10px;'>"
+            html += f"<div class='tab-pane fade {active_class}' id='pills-{hoja.replace(' ', '').replace('.','')}' role='tabpanel'><div class='row row-productos g-3' style='padding:5px;'>"
             
-            # Renderizado en formato de Mosaico / Catálogo Visual
             for p in productos_hoja:
                 img_data = p.get('image_256')
                 if img_data:
@@ -188,9 +191,8 @@ def main():
                 stock_val = p['stock_calculado']
                 stock_class = "stock-rojo" if stock_val <= 5 else ("stock-amarillo" if stock_val <= 20 else "stock-verde")
 
-                html += f"<div class='col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 tarjeta-contenedor'><div class='card card-producto shadow-sm d-flex flex-column justify-content-between'><div class='position-relative'>{img_tag}<span class='position-absolute top-0 start-0 m-2 badge bg-dark font-monospace fs-6'>{p.get('default_code', '-')}</span><span class='position-absolute top-0 end-0 m-2 badge {stock_class} fw-bold fs-6'>Stock: {int(stock_val)}</span></div><div class='card-body d-flex flex-column justify-content-between p-3 bg-white'><div class='mb-2'><h6 class='fw-bold text-dark text-uppercase' style='font-size:0.95rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;height:40px;'>{p.get('name', '')}</h6><div class='d-flex justify-content-between align-items-center'><small class='text-muted fw-semibold'>{p['marca_limpia']}</small></div></div><div class='row g-1 border-top pt-2'>"
+                html += f"<div class='col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 tarjeta-contenedor'><div class='card card-producto shadow-sm d-flex flex-column justify-content-between'><div class='position-relative'>{img_tag}<span class='position-absolute top-0 start-0 m-2 badge bg-dark font-monospace fs-6' data-campo='codigo'>{p.get('default_code', '-')}</span><span class='position-absolute top-0 end-0 m-2 badge {stock_class} fw-bold fs-6' data-campo='stock'>Stock: {int(stock_val)}</span></div><div class='card-body d-flex flex-column justify-content-between p-3 bg-white'><div class='mb-2'><h6 class='fw-bold text-dark text-uppercase' data-campo='nombre' style='font-size:0.92rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;height:40px;'>{p.get('name', '')}</h6><div class='d-flex justify-content-between align-items-center'><small class='text-muted fw-semibold' data-campo='marca'>{p['marca_limpia']}</small></div></div><div class='row g-1 border-top pt-2 fila-precios-tarjeta'>"
                 
-                # Cuadrícula compacta de las 6 listas de precios al pie de la foto
                 for idx, precio in enumerate(p['lista_precios_vals']):
                     pl_name = pricelists[idx]["name_clean"]
                     precio_val = float(precio or 0.0)
@@ -198,21 +200,111 @@ def main():
                         precio_html = f"US$ {precio_val:,.2f}"
                     else:
                         precio_html = f"{int(round(precio_val)):,}".replace(",", ".") + " Gs."
-                    html += f"<div class='col-4'><div class='price-box'><span class='text-muted d-block fw-semibold' style='font-size:0.65rem;'>{pl_name}</span><strong class='text-success fw-bold' style='font-size:0.75rem;'>{precio_html}</strong></div></div>"
+                    html += f"<div class='col-4 price-cell' data-tarifa-name='{pl_name}' data-tarifa-val='{precio_html}'><div class='price-box'><span class='text-muted d-block fw-semibold' style='font-size:0.62rem;'>{pl_name}</span><strong class='text-success fw-bold' style='font-size:0.75rem;'>{precio_html}</strong></div></div>"
                 
                 html += "</div></div></div></div>"
 
             html += "</div></div>"
             first_content = False
 
-        # JAVASCRIPT: Buscador inteligente que salta a "Todo" al teclear
-        html += "</div></div><script>document.getElementById('buscadorWeb').addEventListener('input',function(){let f=this.value.toUpperCase();if(f.trim()!==''){{let todoTab=document.getElementById('pills-Todo-tab');if(todoTab&&!todoTab.classList.contains('active')){{todoTab.click();}}}}let cards=document.querySelectorAll('.tarjeta-contenedor');cards.forEach(c=>{{let t=c.innerText.toUpperCase();c.style.display=t.includes(f)?'':'none';}});});</script></body></html>"
+        html += """</div></div><div id='print-placeholder'></div>
+        <script>
+            // Mostrar/Ocultar botón Volver Arriba
+            window.onscroll = function() {
+                let btn = document.getElementById('backToTop');
+                if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
+                    btn.style.display = 'flex';
+                } else {
+                    btn.style.display = 'none';
+                }
+            };
+
+            // Buscador Inteligente que muda a "Todo"
+            document.getElementById('buscadorWeb').addEventListener('input', function() {
+                let f = this.value.toUpperCase();
+                if (f.trim() !== '') {
+                    let todoTab = document.getElementById('pills-Todo-tab');
+                    if (todoTab && !todoTab.classList.contains('active')) {
+                        todoTab.click();
+                    }
+                }
+                let cards = document.querySelectorAll('.tarjeta-contenedor');
+                cards.forEach(c => {
+                    let t = c.innerText.toUpperCase();
+                    c.style.display = t.includes(f) ? '' : 'none';
+                });
+            });
+
+            // Función Maestra para generar el PDF a medida de 1 sola Tarifa (Con Logo integrado)
+            function generarPDFCotizacion() {
+                let tarifa = document.getElementById('selectTarifaPDF').value;
+                if (!tarifa) {
+                    alert('Por favor, selecciona una Lista de Precios antes de generar el PDF.');
+                    return;
+                }
+                
+                let activePane = document.querySelector('.tab-pane.active');
+                let activeTabBtn = document.querySelector('.nav-link.active');
+                let nombreCategoria = activeTabBtn ? activeTabBtn.getAttribute('data-hoja-name') : 'General';
+                let tarjetas = activePane.querySelectorAll('.tarjeta-contenedor');
+                
+                let htmlPdf = '<div id="print-section">';
+                htmlPdf += '<div style="display:flex; justify-content:between; align-items:center; border-bottom:3px solid #081226; padding-bottom:10px; margin-bottom:15px;">';
+                htmlPdf += '<div style="display: flex; align-items: center; gap: 15px;">';
+                htmlPdf += '<img src="LOCOC44.png" alt="Camping 44 Logo" style="height: 60px;">';
+                htmlPdf += '<div><h2 style="margin:0; color:#081226; font-family:sans-serif;">CAMPING 44</h2><small style="color:#666;">Catálogo Digital de Productos</small></div>';
+                htmlPdf += '</div>';
+                htmlPdf += '<div style="text-align:right;"><span style="background:#081226; color:white; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:12px;">TARIFA: ' + tarifa + '</span><br><small style="color:#666;">Sección: ' + nombreCategoria + '</small></div>';
+                htmlPdf += '</div>';
+                
+                htmlPdf += '<table class="print-table"><thead><tr><th style="width:80px; text-align:center;">Imagen</th><th style="width:100px;">Código</th><th>Descripción / Producto</th><th style="width:70px; text-align:center;">Stock</th><th style="width:130px; text-align:right;">Precio ('+tarifa+')</th></tr></thead><tbody>';
+                
+                let totalContados = 0;
+                tarjetas.forEach(t => {
+                    if (t.style.display === 'none') return;
+                    
+                    let img = t.querySelector('.producto-img').src;
+                    let cod = t.querySelector('[data-campo="codigo"]').innerText;
+                    let stock = t.querySelector('[data-campo="stock"]').innerText.replace('Stock: ', '');
+                    let nombre = t.querySelector('[data-campo="nombre"]').innerText;
+                    let marca = t.querySelector('[data-campo="marca"]').innerText;
+                    
+                    let precioFinal = '-';
+                    let celdasPrecio = t.querySelectorAll('.price-cell');
+                    celdasPrecio.forEach(c => {
+                        if (c.getAttribute('data-tarifa-name') === tarifa) {
+                            precioFinal = c.getAttribute('data-tarifa-val');
+                        }
+                    });
+                    
+                    htmlPdf += '<tr>';
+                    htmlPdf += '<td style="text-align:center;"><img src="' + img + '" class="print-img-pdf"></td>';
+                    htmlPdf += '<td><strong style="font-family:monospace; font-size:12px;">' + cod + '</strong></td>';
+                    htmlPdf += '<td><span style="font-weight:bold; font-size:12px; color:#333;">' + nombre + '</span><br><small style="color:#777; font-weight:600;">Marca: ' + marca + '</small></td>';
+                    htmlPdf += '<td style="text-align:center; font-weight:bold;">' + stock + '</td>';
+                    htmlPdf += '<td style="text-align:right; font-weight:bold; font-size:13px; color:#166534;">' + precioFinal + '</td>';
+                    htmlPdf += '</tr>';
+                    totalContados++;
+                });
+                
+                htmlPdf += '</tbody></table>';
+                htmlPdf += '<div style="margin-top:15px; text-align:right; font-size:11px; color:#777; font-weight:500;">Total de productos cotizados: ' + totalContados + ' | Generado automáticamente de forma segura.</div>';
+                htmlPdf += '</div>';
+                
+                let placeholder = document.getElementById('print-placeholder');
+                placeholder.innerHTML = htmlPdf;
+                
+                window.print();
+                
+                placeholder.innerHTML = '';
+            }
+        </script></body></html>"""
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(html)
             
         peso_final = os.path.getsize("index.html") / (1024 * 1024)
-        print(f"¡Catálogo index.html generado con éxito! Peso: {peso_final:.2f} MB")
+        print(f"¡Catálogo index.html optimizado con éxito! Peso: {peso_final:.2f} MB")
 
     except Exception as e:
         print(f"Error general: {e}")
