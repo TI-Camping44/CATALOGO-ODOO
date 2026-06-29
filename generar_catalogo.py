@@ -2,20 +2,21 @@ import xmlrpc.client
 import os
 
 # =====================================
-# CONFIGURACIÓN Y CREDENCIALES
+# CONFIGURACIÓN DIRECTA (CAMPING 44)
 # =====================================
-URL = os.environ.get("ODOO_URL")
-DB = os.environ.get("ODOO_DB")
-USER = os.environ.get("ODOO_USER")
-API_KEY = os.environ.get("ODOO_API_KEY")
+URL = "https://camping44.odoo.com"
+DB = "gcaceres93-camping-main-15845610"
+USER = "facundocolman@camping44.com.py"
+API_KEY = "55f70e57a3caa3113e3ffa559b5ba020931dc501"
 
 def main():
     try:
+        # Conexión directa usando tus credenciales
         common = xmlrpc.client.ServerProxy(f'{URL}/xmlrpc/2/common')
         uid = common.authenticate(DB, USER, API_KEY, {})
         models = xmlrpc.client.ServerProxy(f'{URL}/xmlrpc/2/object')
 
-        print("Conectado a Odoo. Extrayendo Listas de Precios...")
+        print("Conectado a Odoo exitosamente. Extrayendo Listas de Precios...")
 
         # 1. LISTAS DE PRECIOS
         pl_data = models.execute_kw(DB, uid, API_KEY, 'product.pricelist', 'search_read',
@@ -61,7 +62,7 @@ def main():
         
         products = models.execute_kw(DB, uid, API_KEY, 'product.product', 'search_read', [filtros], {'fields': campos, 'limit': 50000})
 
-        # 4. LÓGICA DE NEGOCIO Y STOCK
+        # 4. LÓGICA DE NEGOCIO Y STOCK (Reglas de tu AppScript)
         stock_salon = {
             "501048": 20000, "501113": 15000, "501121": 20000, "501333": 5000,
             "501366": 20000, "501379": 20000, "501493": 13000, "501505": 20000,
@@ -99,7 +100,7 @@ def main():
             es_arma = "ARMA" in categoria_str and "ACCESORIO" not in categoria_str
             if es_arma:
                 precio_maygs = mapa_precios.get(tmpl_id, {}).get(maygs_id, 0.0)
-                if not maygs_id or float(precio_maygs) <= 0: continue
+                if not maygs_id or float(precio_maygs or 0) <= 0: continue
 
             desc = (p.get('name') or "").upper()
             marca_str = p['product_brand_id'][1].upper() if p.get('product_brand_id') else "SIN MARCA"
@@ -154,7 +155,7 @@ def main():
 
             categorias_datos[hoja].append(p)
 
-        # 5. CONSTRUIR HTML
+        # 5. CONSTRUIR DISEÑO HTML (Optimizado para Tablets de Ventas)
         html = f"""
         <!DOCTYPE html>
         <html lang="es">
@@ -172,7 +173,7 @@ def main():
                 .table thead th {{ background-color: #081226; color: white; position: sticky; top: 0; z-index: 1; padding: 15px; font-size: 1.1rem; }}
                 .nav-pills .nav-link {{ color: #081226; font-size: 1.1rem; padding: 10px 20px; font-weight: 500; border-radius: 30px; border: 1px solid #dee2e6; }}
                 .nav-pills .nav-link.active {{ background-color: #081226; color: white; border-color: #081226; }}
-                /* CAMBIO: Fotos más grandes para visualización en Tablets */
+                /* Imagen en tamaño grande ideal para mostrar en Tablets */
                 .producto-img {{ width: 180px; height: 180px; object-fit: contain; background: white; padding: 8px; }}
                 .table td {{ padding: 12px 10px; font-size: 1.1rem; }}
             </style>
@@ -238,6 +239,7 @@ def main():
             for p in productos_hoja:
                 img_data = p.get('image_256')
                 if img_data:
+                    if hasattr(img_data, 'data'): img_data = img_data.data
                     img_base64 = img_data.decode("utf-8") if isinstance(img_data, bytes) else img_data
                     img_tag = f'<img src="data:image/png;base64,{img_base64}" class="producto-img rounded shadow-sm border" loading="lazy" alt="Producto">'
                 else:
@@ -254,15 +256,14 @@ def main():
                                         <td class="text-center fw-bold fs-5 {stock_class} rounded-3">{int(stock_val)}</td>
                 """
                 
-                # CAMBIO: Mapeo inteligente de precios (Guaraníes vs Dólares)
                 for idx, precio in enumerate(p['lista_precios_vals']):
                     pl_name = pricelists[idx]["name_clean"]
-                    precio_val = float(precio)
+                    precio_val = float(precio or 0.0)
                     
                     if "USD" in pl_name:
                         precio_html = f"US$ {precio_val:,.2f}"
                     else:
-                        # Formato estricto PYG: Redondea, quita centavos (,00) y usa puntos para miles
+                        # CORRECCIÓN: Sin ,00 final, redondeado estricto y con puntos de miles para Guaraníes
                         precio_html = f"{int(round(precio_val)):,}".replace(",", ".") + " Gs."
                         
                     html += f'<td class="text-end text-success fw-bold fs-5 text-nowrap">{precio_html}</td>'
@@ -306,7 +307,7 @@ def main():
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(html)
-        print("HTML generado exitosamente con imágenes HD.")
+        print("HTML generado exitosamente.")
 
     except Exception as e:
         print(f"Error general: {e}")
