@@ -151,15 +151,13 @@ def main():
                 p_precios.append(p_val)
             p['lista_precios_vals'] = p_precios
 
-            # AHORA SOLO GUARDAMOS EN TODO PARA EL CONTEO, SIN DUPLICAR HTML MÁS ADELANTE
             categorias_datos[hoja].append(p)
             categorias_datos["Todo"].append(p)
 
-        print("Armando interfaz web híbrida ULTRA RÁPIDA...")
+        print("Armando interfaz web híbrida ULTRA RÁPIDA con seguros PDF...")
         logo_html = f"data:image/png;base64,{logo_base64}" if logo_base64 else ""
         
-        # INICIO HTML Y CSS OPTIMIZADO (content-visibility para que no explote la memoria)
-        html = """<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:30px;}.stock-rojo{background-color:#FEE2E2!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#D1FAE5!important;color:#065F46;}/* Sidebar y Scrollbars */.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.desktop-sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:#fff;border-right:1px solid #e5e7eb;padding:20px 15px;box-shadow:2px 0 10px rgba(0,0,0,0.03);scrollbar-width:thin;}/* Botones Filtro */.btn-filtro{color:#081226;font-size:0.95rem;padding:9px 16px;font-weight:600;border-radius:30px;border:1px solid #dee2e6;text-align:left;width:100%;cursor:pointer;background:#fff;transition:0.2s;}.nav-scroll-container .btn-filtro{width:auto;text-align:center;}.btn-filtro.active{background-color:#081226;color:white;border-color:#081226;}/* Tarjeta Ultra Optimizada */.tarjeta-contenedor{content-visibility:auto;contain-intrinsic-size:350px;}.producto-img{width:100%;height:220px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:14px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:1px solid #e5e7eb;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.08)!important;}.price-box{background:#f9fafb;border-radius:8px;padding:6px 4px;font-size:0.82rem;text-align:center;border:1px solid #e5e7eb;height:100%;display:flex;flex-direction:column;justify-content:center;}.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}@media print{body{background:#fff;padding:0;}.desktop-sidebar,#buscadorWeb,.btn-back-to-top,.row-controles,.nav-scroll-container,.row-encabezado-web{display:none!important;}.row{display:block!important;}#print-section{display:block!important;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:11px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><button onclick='window.scrollTo({top:0,behavior:"smooth"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid'><div class='row'><div class='col-lg-3 d-none d-lg-block desktop-sidebar'><div class='text-center mb-4'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height:65px;max-width:100%;object-fit:contain;'><h5 class='fw-bold mt-3 text-dark' style='letter-spacing:-0.5px;'>Camping 44 - Catálogo</h5></div><ul class='nav flex-column gap-2'>"""
+        html = """<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:30px;}.stock-rojo{background-color:#FEE2E2!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#D1FAE5!important;color:#065F46;}/* Sidebar PC */.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.desktop-sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:#fff;border-right:1px solid #e5e7eb;padding:20px 15px;box-shadow:2px 0 10px rgba(0,0,0,0.03);scrollbar-width:thin;}/* Botones Filtro */.btn-filtro{color:#081226;font-size:0.92rem;padding:9px 12px;font-weight:600;border-radius:30px;border:1px solid #dee2e6;text-align:left;width:100%;cursor:pointer;background:#fff;transition:0.2s;margin-bottom:6px;}.nav-scroll-container .btn-filtro{width:auto;text-align:center;margin-bottom:0;}.btn-filtro.active{background-color:#081226;color:white;border-color:#081226;}/* Tarjeta Optimizada */.tarjeta-contenedor{content-visibility:auto;contain-intrinsic-size:350px;}.producto-img{width:100%;height:200px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:12px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:1px solid #e5e7eb;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.08)!important;}.price-box{background:#f9fafb;border-radius:8px;padding:6px 4px;font-size:0.82rem;text-align:center;border:1px solid #e5e7eb;height:100%;display:flex;flex-direction:column;justify-content:center;}.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}@media print{body{background:#fff;padding:0;}.desktop-sidebar,#buscadorWeb,.btn-back-to-top,.row-controles,.nav-scroll-container,.row-encabezado-web{display:none!important;}.row{display:block!important;}#print-section{display:block!important;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:11px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><button onclick='window.scrollTo({top:0,behavior:"smooth"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid'><div class='row'><div class='col-lg-2 d-none d-lg-block desktop-sidebar'><div class='text-center mb-4'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height:50px;max-width:100%;object-fit:contain;'><h6 class='fw-bold mt-3 text-dark' style='letter-spacing:-0.5px;'>Catálogo Mayorista</h6></div><ul class='nav flex-column gap-1'>"""
         
         html = html.replace('##LOGO_HTML##', logo_html)
         
@@ -171,14 +169,14 @@ def main():
             html += f"<li class='nav-item'><button class='btn-filtro {active_class}' data-filtro='{hoja}'>📦 {hoja} ({len(pandas_clone)})</button></li>"
             first_tab = False
 
-        html += """</ul></div><div class='col-12 col-lg-9 py-3'><div class='row align-items-center mb-3 d-lg-none row-encabezado-web'><div class='col-4 text-start'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height: 50px; max-width:160px; object-fit:contain;'></div><div class='col-8 text-end'><h3 class='fw-bold mb-0 text-dark' style='letter-spacing:-0.5px;'>Catálogo Digital</h3></div></div><div class='row row-controles g-2 justify-content-center mb-3'><div class='col-12 col-md-6'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1.1rem;'></div><div class='col-7 col-md-3'><select id='selectTarifaPDF' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value=''>-- Seleccionar Tarifa PDF --</option>"""
+        html += """</ul></div><div class='col-12 col-lg-10 py-3'><div class='row align-items-center mb-3 d-lg-none row-encabezado-web'><div class='col-4 text-start'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height: 45px; max-width:140px; object-fit:contain;'></div><div class='col-8 text-end'><h4 class='fw-bold mb-0 text-dark' style='letter-spacing:-0.5px;'>Catálogo Digital</h4></div></div><div class='row row-controles g-2 justify-content-center mb-3'><div class='col-12 col-md-6'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1rem;'></div><div class='col-7 col-md-4'><select id='selectTarifaPDF' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value=''>-- Seleccionar Tarifa PDF --</option>"""
         
         html = html.replace('##LOGO_HTML##', logo_html)
         
         for pl in pricelists:
             html += f"<option value='{pl['name_clean']}'>Exportar {pl['name_clean']}</option>"
             
-        html += "</select></div><div class='col-5 col-md-2'><button onclick='generarPDFCotizacion()' class='btn btn-lg btn-danger shadow-sm rounded-pill w-100 fw-bold' style='font-size:1rem;'>📄 PDF</button></div></div><div class='position-sticky top-0 bg-light z-3 shadow-sm rounded-4 mb-3 nav-scroll-container d-lg-none'><ul class='nav flex-nowrap'>"
+        html += "</select></div><div class='col-5 col-md-2'><button id='btnGenerarPDF' onclick='generarPDFCotizacion()' class='btn btn-lg btn-danger shadow-sm rounded-pill w-100 fw-bold' style='font-size:1rem;'>📄 PDF</button></div></div><div class='position-sticky top-0 bg-light z-3 shadow-sm rounded-4 mb-3 nav-scroll-container d-lg-none'><ul class='nav flex-nowrap'>"
         
         first_tab = True
         for hoja in orden_hojas:
@@ -190,10 +188,8 @@ def main():
 
         html += "</ul></div>"
 
-        # GENERACIÓN DE GRILLA ÚNICA (SÚPER RÁPIDA, NO MÁS TABS DUPLICADAS)
         html += "<div class='row row-productos g-3' id='grilla-productos' style='padding:5px;'>"
         
-        # Iteramos SOLO la lista TODO. Cada tarjeta tiene el data-hoja asignado.
         for p in categorias_datos["Todo"]:
             hoja = p['hoja_asignada']
             img_data = p.get('image_256')
@@ -229,10 +225,9 @@ def main():
                 
             html += "</div></div></div></div>"
 
-        # MOTOR JAVASCRIPT RE-ESCRITO PARA PERFORMANCE (DEBOUNCING Y DOM CACHE)
+        # JS CON LIMITADOR DE SEGURIDAD PARA EL PDF Y DELAY ASÍNCRONO
         footer_html = """</div></div></div></div><div id='print-placeholder'></div>
         <script>
-            // CACHE EN MEMORIA PARA QUE LA TABLET NO EXPLOTE BUSCANDO
             const arrayTarjetas = Array.from(document.querySelectorAll('.tarjeta-contenedor')).map(t => ({
                 el: t,
                 texto: t.innerText.toUpperCase(),
@@ -241,7 +236,6 @@ def main():
 
             const botonesFiltro = document.querySelectorAll('.btn-filtro');
 
-            // SISTEMA DE BOTONES (FILTROS INSTANTÁNEOS SIN RECARGAR)
             botonesFiltro.forEach(btn => {
                 btn.addEventListener('click', () => {
                     let filtro = btn.getAttribute('data-filtro');
@@ -250,7 +244,7 @@ def main():
                     document.querySelectorAll(`.btn-filtro[data-filtro="${filtro}"]`).forEach(b => b.classList.add('active'));
 
                     let buscador = document.getElementById('buscadorWeb');
-                    if(buscador.value !== '') buscador.value = ''; // Limpiar buscador al cambiar de pestaña
+                    if(buscador.value !== '') buscador.value = ''; 
 
                     arrayTarjetas.forEach(t => {
                         t.el.style.display = (filtro === 'Todo' || t.hoja === filtro) ? '' : 'none';
@@ -259,7 +253,6 @@ def main():
                 });
             });
 
-            // BUSCADOR INTELIGENTE CON "ACELERADOR" (DEBOUNCE 300ms)
             let debounceTimer;
             document.getElementById('buscadorWeb').addEventListener('input', function() {
                 clearTimeout(debounceTimer);
@@ -267,7 +260,6 @@ def main():
                 
                 debounceTimer = setTimeout(() => {
                     if (query !== '') {
-                        // Forzar a pestaña TODO
                         botonesFiltro.forEach(b => b.classList.remove('active'));
                         document.querySelectorAll(`.btn-filtro[data-filtro="Todo"]`).forEach(b => b.classList.add('active'));
                         
@@ -275,13 +267,11 @@ def main():
                             t.el.style.display = t.texto.includes(query) ? '' : 'none';
                         });
                     } else {
-                        // Si borra el texto, vuelve a la pestaña TODO y muestra todo
                         document.querySelector('.btn-filtro[data-filtro="Todo"]').click();
                     }
-                }, 300); // <-- ESTA ES LA CLAVE PARA QUE NO SE CUELGUE LA TABLET
+                }, 300);
             });
 
-            // BOTÓN VOLVER ARRIBA
             window.onscroll = function() {
                 let btn = document.getElementById('backToTop');
                 if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
@@ -291,7 +281,7 @@ def main():
                 }
             };
 
-            // PDF BLINDADO (NO SE ROMPE SI FALTA FOTO)
+            // FUNCIÓN PDF SEGURA Y ASÍNCRONA
             function generarPDFCotizacion() {
                 try {
                     let tarifa = document.getElementById('selectTarifaPDF').value;
@@ -300,6 +290,20 @@ def main():
                         return;
                     }
                     
+                    let visibles = arrayTarjetas.filter(t => t.el.style.display !== 'none');
+                    
+                    // FRENO DE SEGURIDAD PARA QUE NO EXPLOTE LA TABLET
+                    if (visibles.length > 400) {
+                        alert('⚠️ ESTÁS INTENTANDO EXPORTAR ' + visibles.length + ' PRODUCTOS.\\n\\nEl navegador de tu tablet se congelará al armar un PDF tan gigante con tantas fotos.\\n\\n✅ SOLUCIÓN:\\nPor favor, seleccioná una categoría al costado (ej: "ASG" o "Municiones") o usá el buscador para filtrar los productos, y luego volvé a darle al botón de PDF para enviárselo a tu cliente.');
+                        return;
+                    }
+
+                    // Botón en modo de carga
+                    let btnPdf = document.getElementById('btnGenerarPDF');
+                    let originalText = btnPdf.innerHTML;
+                    btnPdf.innerHTML = '⏳ Cargando...';
+                    btnPdf.disabled = true;
+                    
                     let activeBtn = document.querySelector('.btn-filtro.active');
                     let nombreCategoria = activeBtn ? activeBtn.innerText.split('(')[0].trim() : 'General';
                     
@@ -307,7 +311,7 @@ def main():
                     htmlPdf += '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #081226; padding-bottom:10px; margin-bottom:15px;">';
                     htmlPdf += '<div style="display: flex; align-items: center; gap: 15px;">';
                     htmlPdf += '<img src="##LOGO_HTML##" alt="Camping 44" style="height: 55px; max-width:180px; object-fit:contain;">';
-                    htmlPdf += '<div style="margin-left: 15px;"><h2 style="margin:0; color:#081226; font-family:sans-serif;">CAMPING 44</h2><small style="color:#666;">Catálogo Digital de Productos</small></div>';
+                    htmlPdf += '<div style="margin-left: 15px;"><h2 style="margin:0; color:#081226; font-family:sans-serif;">CAMPING 44</h2><small style="color:#666;">Cotización de Productos</small></div>';
                     htmlPdf += '</div>';
                     htmlPdf += '<div style="text-align:right;"><span style="background:#081226; color:white; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:12px;">TARIFA: ' + tarifa + '</span><br><small style="color:#666;">Filtro: ' + nombreCategoria + '</small></div>';
                     htmlPdf += '</div>';
@@ -315,9 +319,6 @@ def main():
                     htmlPdf += '<table class="print-table"><thead><tr><th style="width:80px; text-align:center;">Imagen</th><th style="width:100px;">Código</th><th>Descripción / Producto</th><th style="width:70px; text-align:center;">Stock</th><th style="width:130px; text-align:right;">Precio ('+tarifa+')</th></tr></thead><tbody>';
                     
                     let totalContados = 0;
-                    
-                    // Solo exporta los que están visibles en pantalla ahora mismo
-                    let visibles = arrayTarjetas.filter(t => t.el.style.display !== 'none');
                     
                     visibles.forEach(tObj => {
                         let t = tObj.el;
@@ -360,13 +361,19 @@ def main():
                     });
                     
                     htmlPdf += '</tbody></table>';
-                    htmlPdf += '<div style="margin-top:15px; text-align:right; font-size:11px; color:#777; font-weight:500;">Total de productos cotizados: ' + totalContados + ' | Generado automáticamente desde Odoo.</div>';
+                    htmlPdf += '<div style="margin-top:15px; text-align:right; font-size:11px; color:#777; font-weight:500;">Total de productos cotizados: ' + totalContados + ' | Generado de forma automática.</div>';
                     htmlPdf += '</div>';
                     
                     let placeholder = document.getElementById('print-placeholder');
                     placeholder.innerHTML = htmlPdf;
-                    window.print();
-                    placeholder.innerHTML = '';
+                    
+                    // Asincronismo para evitar que la UI se cuelgue al armar la tabla pesada
+                    setTimeout(() => {
+                        window.print();
+                        placeholder.innerHTML = '';
+                        btnPdf.innerHTML = originalText;
+                        btnPdf.disabled = false;
+                    }, 500);
                     
                 } catch (err) {
                     alert('Ocurrió un inconveniente al armar el PDF. Por favor intenta de nuevo.');
