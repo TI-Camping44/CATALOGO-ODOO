@@ -154,10 +154,10 @@ def main():
             categorias_datos[hoja].append(p)
             categorias_datos["Todo"].append(p)
 
-        print("Armando interfaz web híbrida ULTRA RÁPIDA con PDF Seguro...")
+        print("Armando interfaz web híbrida ULTRA RÁPIDA con Multi-Select y Reglas Comerciales...")
         logo_html = f"data:image/png;base64,{logo_base64}" if logo_base64 else ""
         
-        html = """<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:30px;}.stock-rojo{background-color:#FEE2E2!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#D1FAE5!important;color:#065F46;}/* Sidebar PC */.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.desktop-sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:#fff;border-right:1px solid #e5e7eb;padding:20px 15px;box-shadow:2px 0 10px rgba(0,0,0,0.03);scrollbar-width:thin;}/* Botones Filtro */.btn-filtro{color:#081226;font-size:0.92rem;padding:9px 12px;font-weight:600;border-radius:30px;border:1px solid #dee2e6;text-align:left;width:100%;cursor:pointer;background:#fff;transition:0.2s;margin-bottom:6px;}.nav-scroll-container .btn-filtro{width:auto;text-align:center;margin-bottom:0;}.btn-filtro.active{background-color:#081226;color:white;border-color:#081226;}/* Tarjeta Optimizada */.tarjeta-contenedor{content-visibility:auto;contain-intrinsic-size:350px;}.producto-img{width:100%;height:200px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:12px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:1px solid #e5e7eb;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.08)!important;}.price-box{background:#f9fafb;border-radius:8px;padding:6px 4px;font-size:0.82rem;text-align:center;border:1px solid #e5e7eb;height:100%;display:flex;flex-direction:column;justify-content:center;}.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}/* CSS PARA IMPRESIÓN PERFECTA */@media print{body{background:#fff;padding:0;}#web-app{display:none!important;}#print-placeholder{display:block!important;width:100%;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:12px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><div id="web-app"><button onclick='window.scrollTo({top:0,behavior:"smooth"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid'><div class='row'><div class='col-lg-2 d-none d-lg-block desktop-sidebar'><div class='text-center mb-4'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height:50px;max-width:100%;object-fit:contain;'><h6 class='fw-bold mt-3 text-dark' style='letter-spacing:-0.5px;'>Catálogo Mayorista</h6></div><ul class='nav flex-column gap-1'>"""
+        html = """<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'></script><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:30px;}.stock-rojo{background-color:#FEE2E2!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#D1FAE5!important;color:#065F46;}/* Sidebar PC */.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.desktop-sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:#fff;border-right:1px solid #e5e7eb;padding:20px 15px;box-shadow:2px 0 10px rgba(0,0,0,0.03);scrollbar-width:thin;}/* Botones Filtro */.btn-filtro{color:#081226;font-size:0.92rem;padding:9px 12px;font-weight:600;border-radius:30px;border:1px solid #dee2e6;text-align:left;width:100%;cursor:pointer;background:#fff;transition:0.2s;margin-bottom:6px;}.nav-scroll-container .btn-filtro{width:auto;text-align:center;margin-bottom:0;}.btn-filtro.active{background-color:#081226;color:white;border-color:#081226;}/* Tarjeta Optimizada */.tarjeta-contenedor{content-visibility:auto;contain-intrinsic-size:350px;}.producto-img{width:100%;height:200px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:12px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:1px solid #e5e7eb;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.08)!important;}.price-box{background:#f9fafb;border-radius:8px;padding:6px 4px;font-size:0.82rem;text-align:center;border:1px solid #e5e7eb;height:100%;display:flex;flex-direction:column;justify-content:center;}.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}/* CSS IMPRESIÓN */@media print{body{background:#fff;padding:0;}#web-app{display:none!important;}#print-placeholder{display:block!important;width:100%;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:8px;border:1px solid #ddd;font-size:11px;text-transform:uppercase;text-align:center;}.print-table td{padding:6px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:60px!important;height:60px!important;object-fit:contain;} }</style></head><body><div id="web-app"><button onclick='window.scrollTo({top:0,behavior:"smooth"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid'><div class='row'><div class='col-lg-2 d-none d-lg-block desktop-sidebar'><div class='text-center mb-4'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height:50px;max-width:100%;object-fit:contain;'><h6 class='fw-bold mt-3 text-dark' style='letter-spacing:-0.5px;'>Catálogo Mayorista</h6></div><ul class='nav flex-column gap-1'>"""
         
         html = html.replace('##LOGO_HTML##', logo_html)
         
@@ -169,14 +169,17 @@ def main():
             html += f"<li class='nav-item'><button class='btn-filtro {active_class}' data-filtro='{hoja}'>📦 {hoja} ({len(pandas_clone)})</button></li>"
             first_tab = False
 
-        html += """</ul></div><div class='col-12 col-lg-10 py-3'><div class='row align-items-center mb-3 d-lg-none row-encabezado-web'><div class='col-4 text-start'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height: 45px; max-width:140px; object-fit:contain;'></div><div class='col-8 text-end'><h4 class='fw-bold mb-0 text-dark' style='letter-spacing:-0.5px;'>Catálogo Digital</h4></div></div><div class='row row-controles g-2 justify-content-center mb-3'><div class='col-12 col-md-6'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1rem;'></div><div class='col-7 col-md-4'><select id='selectTarifaPDF' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value=''>-- Seleccionar Tarifa PDF --</option>"""
+        html += """</ul></div><div class='col-12 col-lg-10 py-3'><div class='row align-items-center mb-3 d-lg-none row-encabezado-web'><div class='col-4 text-start'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height: 45px; max-width:140px; object-fit:contain;'></div><div class='col-8 text-end'><h4 class='fw-bold mb-0 text-dark' style='letter-spacing:-0.5px;'>Catálogo Digital</h4></div></div><div class='row row-controles g-2 justify-content-center mb-3'><div class='col-12 col-md-6'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1rem;'></div>"""
         
         html = html.replace('##LOGO_HTML##', logo_html)
         
+        # NUEVO MULTI-SELECTOR DE TARIFAS CON DROPDOWN Y CHECKBOXES
+        html += """<div class='col-7 col-md-4'><div class='dropdown'><button class='btn btn-lg btn-outline-secondary dropdown-toggle w-100 bg-white shadow-sm rounded-pill text-start d-flex justify-content-between align-items-center' type='button' data-bs-toggle='dropdown' aria-expanded='false' data-bs-auto-close='outside' style='font-size:1rem; border:2px solid #dee2e6;'><span id='lblMultiTarifa' class='text-truncate'>Seleccionar Tarifas (Múltiple)</span></button><ul class='dropdown-menu w-100 shadow p-2' style='max-height: 250px; overflow-y: auto;'>"""
+        
         for pl in pricelists:
-            html += f"<option value='{pl['name_clean']}'>Exportar {pl['name_clean']}</option>"
+            html += f"<li><div class='form-check ms-2 mb-2'><input class='form-check-input check-tarifa-pdf' type='checkbox' value='{pl['name_clean']}' id='chk_{pl['name_clean']}'><label class='form-check-label fw-bold' for='chk_{pl['name_clean']}'>Tarifa {pl['name_clean']}</label></div></li>"
             
-        html += "</select></div><div class='col-5 col-md-2'><button id='btnGenerarPDF' onclick='generarPDFCotizacion()' class='btn btn-lg btn-danger shadow-sm rounded-pill w-100 fw-bold' style='font-size:1rem;'>📄 PDF</button></div></div><div class='position-sticky top-0 bg-light z-3 shadow-sm rounded-4 mb-3 nav-scroll-container d-lg-none'><ul class='nav flex-nowrap'>"
+        html += "</ul></div></div><div class='col-5 col-md-2'><button id='btnGenerarPDF' onclick='generarPDFCotizacion()' class='btn btn-lg btn-danger shadow-sm rounded-pill w-100 fw-bold' style='font-size:1rem;'>📄 PDF</button></div></div><div class='position-sticky top-0 bg-light z-3 shadow-sm rounded-4 mb-3 nav-scroll-container d-lg-none'><ul class='nav flex-nowrap'>"
         
         first_tab = True
         for hoja in orden_hojas:
@@ -225,10 +228,9 @@ def main():
                 
             html += "</div></div></div></div>"
 
-        # JS CON EXTRACCIÓN BLINDADA (TEXTCONTENT EN LUGAR DE INNERTEXT) Y DISPLAY NONE PARA LA WEB
+        # JS CON MOTOR MULTI-TARIFA Y REGLAS DE NEGOCIO EN PDF
         footer_html = """</div></div></div></div></div><div id='print-placeholder'></div>
         <script>
-            // Usamos textContent porque innerText falla si el elemento está oculto por optimización de memoria
             const arrayTarjetas = Array.from(document.querySelectorAll('.tarjeta-contenedor')).map(t => ({
                 el: t,
                 texto: t.textContent.toUpperCase(),
@@ -282,53 +284,101 @@ def main():
                 }
             };
 
+            // BASE DE CONOCIMIENTO (REGLAS DE NEGOCIO POR MARCA)
+            const reglasComerciales = {
+                "CROSMAN": "<b>DIST 1:</b> 3 Unidades o Monto Gs. 10.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 6 Unidades o Monto Gs. 16.000.000",
+                "UMAREX": "<b>DIST 1:</b> 3 Unidades o Monto Gs. 16.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 6 Unidades o Monto Gs. 25.000.000",
+                "FOBUS": "<b>DIST 1:</b> 15 Unidades o Monto Gs. 4.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 30 Unidades o Monto Gs. 8.000.000",
+                "KONUS": "<b>DIST 1:</b> 3 Unidades o Monto Gs. 10.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 6 Unidades o Monto Gs. 16.000.000",
+                "COLEMAN": "<b>DIST 1:</b> 3 Unidades o Monto Gs. 4.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 6 Unidades o Monto Gs. 8.000.000",
+                "NTK": "<b>DIST 1:</b> 3 Unidades o Monto Gs. 6.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 6 Unidades o Monto Gs. 12.000.000",
+                "DOBERMAN MOCHILAS": "<b>DIST 1:</b> 12 Unidades o Monto Gs. 24.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 24 Unidades o Monto Gs. 48.000.000",
+                "DOBERMAN LINTERNAS": "<b>DIST 1:</b> 25 Unidades o Monto Gs. 10.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 50 Unidades o Monto Gs. 25.000.000",
+                "DOBERMAN BALINES": "<b>DIST 1:</b> 3 Cajones o Monto Gs. 10.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 6 Cajones o Monto Gs. 20.000.000",
+                "NITECORE": "<b>DIST 1:</b> 6 Unidades o Monto Gs. 6.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 12 Unidades o Monto Gs. 12.000.000",
+                "VECTOR OPTICS": "<b>DIST 1:</b> 3 Unidades o Monto Gs. 10.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 6 Unidades o Monto Gs. 18.000.000",
+                "ASG": "<b>DIST 1:</b> 3 Unidades o Monto Gs. 12.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 6 Unidades o Monto Gs. 20.000.000",
+                "CATERPILLAR": "<b>DIST 1:</b> 12 Unid (o 2 en Display) o Gs. 4.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 24 Unid (o 3 en Display) o Gs. 8.000.000",
+                "KCI": "<b>DIST 1:</b> 30 Unidades o Monto Gs. 20.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 50 Unidades o Monto Gs. 40.000.000",
+                "TSS": "<b>DIST 1:</b> 20 Unidades o Monto Gs. 16.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> 50 Unidades o Monto Gs. 35.000.000",
+                "APOLO": "<b>DIST 1:</b> Monto Mínimo Gs. 10.000.000 &nbsp;&nbsp;|&nbsp;&nbsp; <b>DIST 2:</b> Monto Mínimo Gs. 20.000.000"
+            };
+
             function generarPDFCotizacion() {
                 try {
-                    let tarifa = document.getElementById('selectTarifaPDF').value;
-                    if (!tarifa) {
-                        alert('Por favor, selecciona una Lista de Precios antes de generar el PDF.');
+                    let checkboxes = document.querySelectorAll('.check-tarifa-pdf:checked');
+                    let tarifasSeleccionadas = Array.from(checkboxes).map(cb => cb.value);
+                    
+                    if (tarifasSeleccionadas.length === 0) {
+                        alert('Por favor, selecciona al menos 1 Lista de Precios en el menú antes de generar el PDF.');
                         return;
                     }
                     
                     let visibles = arrayTarjetas.filter(t => t.el.style.display !== 'none');
                     
                     if (visibles.length > 400) {
-                        alert('⚠️ ESTÁS INTENTANDO EXPORTAR ' + visibles.length + ' PRODUCTOS.\\n\\nEl navegador de tu tablet se congelará al armar un PDF tan gigante con tantas fotos.\\n\\n✅ SOLUCIÓN:\\nPor favor, seleccioná una categoría al costado (ej: "ASG" o "Municiones") o usá el buscador para filtrar los productos, y luego volvé a darle al botón de PDF para enviárselo a tu cliente.');
-                        return;
+                        let continuar = confirm('⚠️ ATENCIÓN: Estás a punto de exportar ' + visibles.length + ' PRODUCTOS.\\n\\nEl documento tardará en generarse debido a la cantidad de imágenes y tarifas seleccionadas.\\n\\n¿Deseás continuar?');
+                        if (!continuar) return;
                     }
 
                     let btnPdf = document.getElementById('btnGenerarPDF');
                     let originalText = btnPdf.innerHTML;
-                    btnPdf.innerHTML = '⏳ Cargando...';
+                    btnPdf.innerHTML = '⏳ Generando...';
                     btnPdf.disabled = true;
                     
                     let activeBtn = document.querySelector('.btn-filtro.active');
                     let nombreCategoria = activeBtn ? activeBtn.innerText.split('(')[0].trim() : 'General';
                     
                     let htmlPdf = '<div id="print-section">';
-                    htmlPdf += '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #081226; padding-bottom:10px; margin-bottom:15px;">';
+                    
+                    // HEADER PDF
+                    htmlPdf += '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #081226; padding-bottom:10px; margin-bottom:10px;">';
                     htmlPdf += '<div style="display: flex; align-items: center; gap: 15px;">';
                     htmlPdf += '<img src="##LOGO_HTML##" alt="Camping 44" style="height: 55px; max-width:180px; object-fit:contain;">';
-                    htmlPdf += '<div style="margin-left: 15px;"><h2 style="margin:0; color:#081226; font-family:sans-serif;">CAMPING 44</h2><small style="color:#666;">Cotización de Productos</small></div>';
+                    htmlPdf += '<div style="margin-left: 15px;"><h2 style="margin:0; color:#081226; font-family:sans-serif;">CAMPING 44</h2><small style="color:#666;">Cotización Múltiple de Productos</small></div>';
                     htmlPdf += '</div>';
-                    htmlPdf += '<div style="text-align:right;"><span style="background:#081226; color:white; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:12px;">TARIFA: ' + tarifa + '</span><br><small style="color:#666;">Filtro: ' + nombreCategoria + '</small></div>';
+                    htmlPdf += '<div style="text-align:right;"><span style="background:#081226; color:white; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:12px;">FILTRO: ' + nombreCategoria + '</span><br><small style="color:#666;">' + tarifasSeleccionadas.join(" | ") + '</small></div>';
                     htmlPdf += '</div>';
                     
-                    htmlPdf += '<table class="print-table"><thead><tr><th style="width:80px; text-align:center;">Imagen</th><th style="width:100px;">Código</th><th>Descripción / Producto</th><th style="width:70px; text-align:center;">Stock</th><th style="width:130px; text-align:right;">Precio ('+tarifa+')</th></tr></thead><tbody>';
+                    // INYECCIÓN DE REGLAS COMERCIALES
+                    if (reglasComerciales[nombreCategoria]) {
+                        htmlPdf += '<div style="background-color: #f8f9fa; border-left: 4px solid #166534; padding: 10px; margin-bottom: 15px; font-size: 11.5px; border-radius: 4px;">';
+                        htmlPdf += '<strong style="color:#081226;">CONDICIONES COMERCIALES (' + nombreCategoria + '):</strong><br>';
+                        htmlPdf += reglasComerciales[nombreCategoria];
+                        htmlPdf += '</div>';
+                    }
+                    
+                    // HEADER TABLA MÚLTIPLE
+                    htmlPdf += '<table class="print-table"><thead><tr><th style="width:70px; text-align:center;">Imagen</th><th style="width:90px;">Código</th><th>Descripción / Producto</th><th style="width:60px; text-align:center;">Stock</th>';
+                    
+                    tarifasSeleccionadas.forEach(t => {
+                        htmlPdf += '<th style="width:100px; text-align:right;">Precio ' + t + '</th>';
+                    });
+                    htmlPdf += '</tr></thead><tbody>';
                     
                     let totalContados = 0;
                     
                     visibles.forEach(tObj => {
                         let t = tObj.el;
-                        let precioFinal = '-';
-                        let celdasPrecio = t.querySelectorAll('.price-cell');
-                        celdasPrecio.forEach(c => {
-                            if (c.getAttribute('data-tarifa-name') === tarifa) {
-                                precioFinal = c.getAttribute('data-tarifa-val');
-                            }
+                        
+                        // Recolectar precios seleccionados
+                        let preciosFila = [];
+                        let tieneAlgunPrecio = false;
+                        
+                        tarifasSeleccionadas.forEach(tarifaReq => {
+                            let pFinal = '-';
+                            let celdasPrecio = t.querySelectorAll('.price-cell');
+                            celdasPrecio.forEach(c => {
+                                if (c.getAttribute('data-tarifa-name') === tarifaReq) {
+                                    pFinal = c.getAttribute('data-tarifa-val');
+                                }
+                            });
+                            if (pFinal !== '-' && pFinal) tieneAlgunPrecio = true;
+                            preciosFila.push(pFinal);
                         });
                         
-                        if (precioFinal === '-' || !precioFinal) return; 
+                        // Si el producto no tiene NINGÚN precio en las tarifas seleccionadas, se salta
+                        if (!tieneAlgunPrecio) return; 
                         
                         let imgEl = t.querySelector('.producto-img');
                         let imgHtml = '<span style="color:#aaa; font-size:10px;">Sin foto</span>';
@@ -336,7 +386,6 @@ def main():
                             imgHtml = '<img src="' + imgEl.src + '" class="print-img-pdf">';
                         }
                         
-                        // Uso de textContent para extraer la info aunque la UI lo tenga apagado
                         let codEl = t.querySelector('[data-campo="codigo"]');
                         let cod = codEl ? codEl.textContent.trim() : '-';
                         
@@ -351,10 +400,14 @@ def main():
                         
                         htmlPdf += '<tr>';
                         htmlPdf += '<td style="text-align:center;">' + imgHtml + '</td>';
-                        htmlPdf += '<td><strong style="font-family:monospace; font-size:12px;">' + cod + '</strong></td>';
-                        htmlPdf += '<td><span style="font-weight:bold; font-size:12px; color:#333;">' + nombre + '</span><br><small style="color:#777; font-weight:600;">Marca: ' + marca + '</small></td>';
-                        htmlPdf += '<td style="text-align:center; font-weight:bold;">' + stock + '</td>';
-                        htmlPdf += '<td style="text-align:right; font-weight:bold; font-size:13px; color:#166534;">' + precioFinal + '</td>';
+                        htmlPdf += '<td><strong style="font-family:monospace; font-size:11px;">' + cod + '</strong></td>';
+                        htmlPdf += '<td><span style="font-weight:bold; font-size:11px; color:#333;">' + nombre + '</span><br><small style="color:#777; font-weight:600; font-size:10px;">Marca: ' + marca + '</small></td>';
+                        htmlPdf += '<td style="text-align:center; font-weight:bold; font-size:11px;">' + stock + '</td>';
+                        
+                        preciosFila.forEach(precioTexto => {
+                            htmlPdf += '<td style="text-align:right; font-weight:bold; font-size:12px; color:#166534;">' + precioTexto + '</td>';
+                        });
+                        
                         htmlPdf += '</tr>';
                         totalContados++;
                     });
@@ -386,7 +439,7 @@ def main():
             f.write(html)
             
         peso_final = os.path.getsize("index.html") / (1024 * 1024)
-        print(f"¡Catálogo Ultra-Rápido optimizado con éxito! Peso: {peso_final:.2f} MB")
+        print(f"¡Catálogo Multi-Tarifa optimizado con éxito! Peso: {peso_final:.2f} MB")
 
     except Exception as e:
         print(f"Error general: {e}")
