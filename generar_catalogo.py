@@ -37,7 +37,7 @@ def main():
             nombre = (pl.get('name') or "").upper().strip()
             if nombre in listas_excluir: continue
             if nombre == "DIST1": nombre = "DIST 1"
-            if nombre == "DIST2": nombre = "DIST 2"
+            if nombre == "DIST2": font = "DIST 2"
             
             if nombre not in usados:
                 usados.add(nombre)
@@ -160,36 +160,54 @@ def main():
             categorias_datos[hoja].append(p)
             categorias_datos["Todo"].append(p)
 
-        # 5. ESTRUCTURA TEXTO PLANO (Evita conflictos de f-strings con JS/CSS)
-        print("Armando interfaz web premium sin errores de sintaxis...")
+        # 5. ESTRUCTURA HTML CON DISEÑO RESPONSIVE DUAL (SIDEBAR PC VS TOPBAR TABLET)
+        print("Armando interfaz web híbrida premium...")
         logo_html = f"data:image/png;base64,{logo_base64}" if logo_base64 else ""
         
-        html = """<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'></script><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:60px;}.stock-rojo{background-color:#FEE2E2!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#D1FAE5!important;color:#065F46;}.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.nav-pills .nav-link{color:#081226;font-size:1rem;padding:8px 16px;font-weight:600;border-radius:30px;border:1px solid #dee2e6;display:inline-block;}.nav-pills .nav-link.active{background-color:#081226;color:white;border-color:#081226;}.producto-img{width:100%;height:220px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:14px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:1px solid #e5e7eb;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.08)!important;}.price-box{background:#f9fafb;border-radius:8px;padding:6px 4px;font-size:0.82rem;text-align:center;border:1px solid #e5e7eb;height:100%;display:flex;flex-direction:column;justify-content:center;}.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}@media print{body{background:#fff;padding:0;}#buscadorWeb,#pills-tab,.btn-back-to-top,.row-controles,.nav-scroll-container,.row-encabezado-web{display:none!important;}.tab-pane{display:block!important;opacity:1!important;}.row{display:block!important;}#print-section{display:block!important;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:11px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><button onclick='window.scrollTo({top:0,behavior:"smooth"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid py-3'><div class='row align-items-center mb-3 row-encabezado-web'><div class='col-4 text-start'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height: 55px; max-width:180px; object-fit:contain;'></div><div class='col-8 text-end'><h3 class='fw-bold mb-0 text-dark' style='letter-spacing:-0.5px;'>Catálogo Digital de Precios</h3></div></div><div class='row row-controles g-2 justify-content-center mb-3'><div class='col-12 col-md-5'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Tapá acá para buscar en TODO el catálogo...' style='font-size:1.1rem;'></div><div class='col-7 col-md-3'><select id='selectTarifaPDF' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value=''>-- Seleccionar Tarifa para PDF --</option>"""
+        html = """<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'></script><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:30px;}.stock-rojo{background-color:#FEE2E2!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#D1FAE5!important;color:#065F46;}/* Diseño barra horizontal para Tablets */.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}/* Diseño Sidebar Vertical para PC */.desktop-sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:#fff;border-right:1px solid #e5e7eb;padding:20px 15px;box-shadow:2px 0 10px rgba(0,0,0,0.03);scrollbar-width:thin;}.nav-pills .nav-link{color:#081226;font-size:0.95rem;padding:9px 16px;font-weight:600;border-radius:30px;border:1px solid #dee2e6;text-align:left;width:100%;}.nav-pills .nav-link.active{background-color:#081226;color:white;border-color:#081226;}.nav-scroll-container .nav-link{width:auto;text-align:center;}.producto-img{width:100%;height:220px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:14px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:1px solid #e5e7eb;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.08)!important;}.price-box{background:#f9fafb;border-radius:8px;padding:6px 4px;font-size:0.82rem;text-align:center;border:1px solid #e5e7eb;height:100%;display:flex;flex-direction:column;justify-content:center;}.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}@media print{body{background:#fff;padding:0;}.desktop-sidebar,#buscadorWeb,#pills-tab,.btn-back-to-top,.row-controles,.nav-scroll-container,.row-encabezado-web{display:none!important;}.tab-pane{display:block!important;opacity:1!important;}.row{display:block!important;}#print-section{display:block!important;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:11px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><button onclick='window.scrollTo({top:0,behavior:"smooth"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid'><div class='row'><div class='col-lg-3 d-none d-lg-block desktop-sidebar'><div class='text-center mb-4'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height:65px;max-width:100%;object-fit:contain;'><h5 class='fw-bold mt-3 text-dark' style='letter-spacing:-0.5px;'>Camping 44 - Catálogo</h5></div><ul class='nav nav-pills flex-column gap-2' id='sidebar-tabs-list' role='tablist'>"""
         
         html = html.replace('##LOGO_HTML##', logo_html)
         
-        for pl in pricelists:
-            html += f"<option value='{pl['name_clean']}'>Exportar Tarifa {pl['name_clean']}</option>"
-            
-        html += "</select></div><div class='col-5 col-md-2'><button onclick='generarPDFCotizacion()' class='btn btn-lg btn-danger shadow-sm rounded-pill w-100 fw-bold' style='font-size:1rem;'>📄 PDF</button></div></div><div class='position-sticky top-0 bg-light z-3 shadow-sm rounded-4 mb-3 nav-scroll-container'><ul class='nav nav-pills flex-nowrap' id='pills-tab' role='tablist'>"
-        
+        # Generar los botones de categorías para el Sidebar de PC
         first_tab = True
         for hoja in orden_hojas:
             pandas_clone = categorias_datos[hoja]
             if not pandas_clone: continue
             active_class = "active" if first_tab else ""
-            html += f"<li class='nav-item' role='presentation'><button class='nav-link {active_class}' id='pills-{hoja.replace(' ', '').replace('.','')}-tab' data-bs-toggle='pill' data-bs-target='#pills-{hoja.replace(' ', '').replace('.','')}' type='button' role='tab' data-hoja-name='{hoja}'>{hoja} ({len(pandas_clone)})</button></li>"
+            clean_id = hoja.replace(' ', '').replace('.','')
+            html += f"<li class='nav-item' role='presentation'><button class='nav-link {active_class}' id='sidebar-{clean_id}-tab' data-bs-toggle='pill' data-bs-target='#pills-{clean_id}' type='button' role='tab' data-hoja-name='{hoja}'>📦 {hoja} ({len(pandas_clone)})</button></li>"
+            first_tab = False
+
+        html += """</ul></div><div class='col-12 col-lg-9 py-3'><div class='row align-items-center mb-3 d-lg-none row-encabezado-web'><div class='col-4 text-start'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height: 50px; max-width:160px; object-fit:contain;'></div><div class='col-8 text-end'><h3 class='fw-bold mb-0 text-dark' style='letter-spacing:-0.5px;'>Catálogo Digital</h3></div></div><div class='row row-controles g-2 justify-content-center mb-3'><div class='col-12 col-md-6'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1.1rem;'></div><div class='col-7 col-md-3'><select id='selectTarifaPDF' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value=''>-- Seleccionar Tarifa PDF --</option>"""
+        
+        html = html.replace('##LOGO_HTML##', logo_html)
+        
+        for pl in pricelists:
+            html += f"<option value='{pl['name_clean']}'>Exportar {pl['name_clean']}</option>"
+            
+        html += "</select></div><div class='col-5 col-md-2'><button onclick='generarPDFCotizacion()' class='btn btn-lg btn-danger shadow-sm rounded-pill w-100 fw-bold' style='font-size:1rem;'>📄 PDF</button></div></div><div class='position-sticky top-0 bg-light z-3 shadow-sm rounded-4 mb-3 nav-scroll-container d-lg-none'><ul class='nav nav-pills flex-nowrap' id='pills-tab' role='tablist'>"
+        
+        # Generar los botones de categorías superiores para Tablet
+        first_tab = True
+        for hoja in orden_hojas:
+            pandas_clone = categorias_datos[hoja]
+            if not pandas_clone: continue
+            active_class = "active" if first_tab else ""
+            clean_id = hoja.replace(' ', '').replace('.','')
+            html += f"<li class='nav-item' role='presentation'><button class='nav-link {active_class}' id='pills-{clean_id}-tab' data-bs-toggle='pill' data-bs-target='#pills-{clean_id}' type='button' role='tab' data-hoja-name='{hoja}'>{hoja}</button></li>"
             first_tab = False
 
         html += "</ul></div><div class='tab-content p-1' id='pills-tabContent'>"
 
+        # Generar las cuadrículas de productos (Compartido por PC y Tablet)
         first_content = True
         for hoja in orden_hojas:
             productos_hoja = categorias_datos[hoja]
             if not productos_hoja: continue
             
             active_class = "show active" if first_content else ""
-            html += f"<div class='tab-pane fade {active_class}' id='pills-{hoja.replace(' ', '').replace('.','')}' role='tabpanel'><div class='row row-productos g-3' style='padding:5px;'>"
+            clean_id = hoja.replace(' ', '').replace('.','')
+            html += f"<div class='tab-pane fade {active_class}' id='pills-{clean_id}' role='tabpanel'><div class='row row-productos g-3' style='padding:5px;'>"
             
             for p in productos_hoja:
                 img_data = p.get('image_256')
@@ -203,7 +221,7 @@ def main():
                 stock_val = p['stock_calculado']
                 stock_class = "stock-rojo" if stock_val <= 5 else ("stock-amarillo" if stock_val <= 20 else "stock-verde")
 
-                html += f"<div class='col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 tarjeta-contenedor'><div class='card card-producto shadow-sm d-flex flex-column justify-content-between'><div class='position-relative'>{img_tag}<span class='position-absolute top-0 start-0 m-2 badge bg-dark font-monospace fs-6' data-campo='codigo'>{p.get('default_code', '-')}</span><span class='position-absolute top-0 end-0 m-2 badge {stock_class} fw-bold fs-6' data-campo='stock'>Stock: {int(stock_val)}</span></div><div class='card-body d-flex flex-column justify-content-between p-3 bg-white'><div class='mb-2'><h6 class='fw-bold text-dark text-uppercase mb-1' data-campo='nombre' style='font-size:0.9rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;height:38px;'>{p.get('name', '')}</h6><div class='d-flex justify-content-between align-items-center'><small class='text-muted fw-bold' data-campo='marca'>{p['marca_limpia']}</small></div></div><div class='row g-1 border-top pt-2 fila-precios-tarjeta'>"
+                html += f"<div class='col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 tarjeta-contenedor'><div class='card card-producto shadow-sm d-flex flex-column justify-content-between'><div class='position-relative'>{img_tag}<span class='position-absolute top-0 start-0 m-2 badge bg-dark font-monospace fs-6' data-campo='codigo'>{p.get('default_code', '-')}</span><span class='position-absolute top-0 end-0 m-2 badge {stock_class} fw-bold fs-6' data-campo='stock'>Stock: {int(stock_val)}</span></div><div class='card-body d-flex flex-column justify-content-between p-3 bg-white'><div class='mb-2'><h6 class='fw-bold text-dark text-uppercase mb-1' data-campo='nombre' style='font-size:0.9rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;height:38px;'>{p.get('name', '')}</h6><div class='d-flex justify-content-between align-items-center'><small class='text-muted fw-bold' data-campo='marca'>{p['marca_limpia']}</small></div></div><div class='row g-1 border-top pt-2 fila-precios-tarjeta'>"
                 
                 has_any_price = False
                 for idx, precio in enumerate(p['lista_precios_vals']):
@@ -228,9 +246,23 @@ def main():
             html += "</div></div>"
             first_content = False
 
-        # BLOQUE JAVASCRIPT NATIVO (Totalmente seguro al no usar f-strings)
-        footer_html = """</div></div><div id='print-placeholder'></div>
+        # BLOQUE JAVASCRIPT NATIVO SEGURO (Mapeo sincronizado PC/Tablet + PDF Blindado con try/catch)
+        footer_html = """</div></div></div></div><div id='print-placeholder'></div>
         <script>
+            // Sincronizar dinámicamente botones de PC y Tablet al cambiar de pestaña
+            document.querySelectorAll('[data-bs-toggle="pill"]').forEach(btn => {
+                btn.addEventListener('shown.bs.tab', function (e) {
+                    let targetId = e.target.getAttribute('data-bs-target');
+                    document.querySelectorAll('[data-bs-toggle="pill"]').forEach(b => {
+                        if (b.getAttribute('data-bs-target') === targetId) {
+                            b.classList.add('active');
+                        } else {
+                            b.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
             window.onscroll = function() {
                 let btn = document.getElementById('backToTop');
                 if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
@@ -243,7 +275,7 @@ def main():
             document.getElementById('buscadorWeb').addEventListener('input', function() {
                 let f = this.value.toUpperCase();
                 if (f.trim() !== '') {
-                    let todoTab = document.getElementById('pills-Todo-tab');
+                    let todoTab = document.getElementById('pills-Todo-tab') || document.getElementById('sidebar-Todo-tab');
                     if (todoTab && !todoTab.classList.contains('active')) {
                         todoTab.click();
                     }
@@ -255,67 +287,93 @@ def main():
                 });
             });
 
+            // Función Maestra para generar el PDF a prueba de fallos (Bulletproof)
             function generarPDFCotizacion() {
-                let tarifa = document.getElementById('selectTarifaPDF').value;
-                if (!tarifa) {
-                    alert('Por favor, selecciona una Lista de Precios antes de generar el PDF.');
-                    return;
-                }
-                
-                let activePane = document.querySelector('.tab-pane.active');
-                let activeTabBtn = document.querySelector('.nav-link.active');
-                let nombreCategoria = activeTabBtn ? activeTabBtn.getAttribute('data-hoja-name') : 'General';
-                let tarjetas = activePane.querySelectorAll('.tarjeta-contenedor');
-                
-                let htmlPdf = '<div id="print-section">';
-                htmlPdf += '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #081226; padding-bottom:10px; margin-bottom:15px;">';
-                htmlPdf += '<div style="display: flex; align-items: center; gap: 15px;">';
-                htmlPdf += '<img src="##LOGO_HTML##" alt="Camping 44 Logo" style="height: 55px; max-width:180px; object-fit:contain;">';
-                htmlPdf += '<div style="margin-left: 15px;"><h2 style="margin:0; color:#081226; font-family:sans-serif;">CAMPING 44</h2><small style="color:#666;">Catálogo Digital de Productos</small></div>';
-                htmlPdf += '</div>';
-                htmlPdf += '<div style="text-align:right;"><span style="background:#081226; color:white; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:12px;">TARIFA: ' + tarifa + '</span><br><small style="color:#666;">Sección: ' + nombreCategoria + '</small></div>';
-                htmlPdf += '</div>';
-                
-                htmlPdf += '<table class="print-table"><thead><tr><th style="width:80px; text-align:center;">Imagen</th><th style="width:100px;">Código</th><th>Descripción / Producto</th><th style="width:70px; text-align:center;">Stock</th><th style="width:130px; text-align:right;">Precio ('+tarifa+')</th></tr></thead><tbody>';
-                
-                let totalContados = 0;
-                tarjetas.forEach(t => {
-                    if (t.style.display === 'none') return;
+                try {
+                    let tarifa = document.getElementById('selectTarifaPDF').value;
+                    if (!tarifa) {
+                        alert('Por favor, selecciona una Lista de Precios antes de generar el PDF.');
+                        return;
+                    }
                     
-                    let precioFinal = '-';
-                    let celdasPrecio = t.querySelectorAll('.price-cell');
-                    celdasPrecio.forEach(c => {
-                        if (c.getAttribute('data-tarifa-name') === tarifa) {
-                            precioFinal = c.getAttribute('data-tarifa-val');
+                    let activePane = document.querySelector('.tab-pane.active');
+                    let activeTabBtn = document.querySelector('.nav-link.active');
+                    let nombreCategoria = activeTabBtn ? activeTabBtn.getAttribute('data-hoja-name') : 'General';
+                    
+                    if (!activePane) {
+                        alert('Error al identificar los productos activos.');
+                        return;
+                    }
+                    
+                    let tarjetas = activePane.querySelectorAll('.tarjeta-contenedor');
+                    
+                    let htmlPdf = '<div id="print-section">';
+                    htmlPdf += '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #081226; padding-bottom:10px; margin-bottom:15px;">';
+                    htmlPdf += '<div style="display: flex; align-items: center; gap: 15px;">';
+                    htmlPdf += '<img src="##LOGO_HTML##" alt="Camping 44" style="height: 55px; max-width:180px; object-fit:contain;">';
+                    htmlPdf += '<div style="margin-left: 15px;"><h2 style="margin:0; color:#081226; font-family:sans-serif;">CAMPING 44</h2><small style="color:#666;">Catálogo Digital de Productos</small></div>';
+                    htmlPdf += '</div>';
+                    htmlPdf += '<div style="text-align:right;"><span style="background:#081226; color:white; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:12px;">TARIFA: ' + tarifa + '</span><br><small style="color:#666;">Sección: ' + nombreCategoria + '</small></div>';
+                    htmlPdf += '</div>';
+                    
+                    htmlPdf += '<table class="print-table"><thead><tr><th style="width:80px; text-align:center;">Imagen</th><th style="width:100px;">Código</th><th>Descripción / Producto</th><th style="width:70px; text-align:center;">Stock</th><th style="width:130px; text-align:right;">Precio ('+tarifa+')</th></tr></thead><tbody>';
+                    
+                    let totalContados = 0;
+                    tarjetas.forEach(t => {
+                        if (t.style.display === 'none') return;
+                        
+                        let precioFinal = '-';
+                        let celdasPrecio = t.querySelectorAll('.price-cell');
+                        celdasPrecio.forEach(c => {
+                            if (c.getAttribute('data-tarifa-name') === tarifa) {
+                                precioFinal = c.getAttribute('data-tarifa-val');
+                            }
+                        });
+                        
+                        if (precioFinal === '-' || !precioFinal) return; 
+                        
+                        // EXTRACCIÓN PROTEGIDA CONTRA ERRORES: Valida si es una imagen real o cuadro gris
+                        let imgEl = t.querySelector('.producto-img');
+                        let imgHtml = '<span style="color:#aaa; font-size:10px;">Sin foto</span>';
+                        if (imgEl && imgEl.tagName === 'IMG') {
+                            imgHtml = '<img src="' + imgEl.src + '" class="print-img-pdf">';
                         }
+                        
+                        let codEl = t.querySelector('[data-campo="codigo"]');
+                        let cod = codEl ? codEl.innerText : '-';
+                        
+                        let stockEl = t.querySelector('[data-campo="stock"]');
+                        let stock = stockEl ? stockEl.innerText.replace('Stock: ', '') : '0';
+                        
+                        let nombreEl = t.querySelector('[data-campo="nombre"]');
+                        let nombre = nombreEl ? nombreEl.innerText : 'Producto';
+                        
+                        let marcaEl = t.querySelector('[data-campo="marca"]');
+                        let marca = marcaEl ? marcaEl.innerText : 'Sin Marca';
+                        
+                        htmlPdf += '<tr>';
+                        htmlPdf += '<td style="text-align:center;">' + imgHtml + '</td>';
+                        htmlPdf += '<td><strong style="font-family:monospace; font-size:12px;">' + cod + '</strong></td>';
+                        htmlPdf += '<td><span style="font-weight:bold; font-size:12px; color:#333;">' + nombre + '</span><br><small style="color:#777; font-weight:600;">Marca: ' + marca + '</small></td>';
+                        htmlPdf += '<td style="text-align:center; font-weight:bold;">' + stock + '</td>';
+                        htmlPdf += '<td style="text-align:right; font-weight:bold; font-size:13px; color:#166534;">' + precioFinal + '</td>';
+                        htmlPdf += '</tr>';
+                        totalContados++;
                     });
                     
-                    if (precioFinal === '-') return; 
+                    htmlPdf += '</tbody></table>';
+                    htmlPdf += '<div style="margin-top:15px; text-align:right; font-size:11px; color:#777; font-weight:500;">Total de productos cotizados: ' + totalContados + ' | Generado automáticamente desde Odoo.</div>';
+                    htmlPdf += '</div>';
                     
-                    let img = t.querySelector('.producto-img').src;
-                    let cod = t.querySelector('[data-campo="codigo"]').innerText;
-                    let stock = t.querySelector('[data-campo="stock"]').innerText.replace('Stock: ', '');
-                    let nombre = t.querySelector('[data-campo="nombre"]').innerText;
-                    let marca = t.querySelector('[data-campo="marca"]').innerText;
+                    let placeholder = document.getElementById('print-placeholder');
+                    placeholder.innerHTML = htmlPdf;
+                    window.print();
+                    placeholder.innerHTML = '';
                     
-                    htmlPdf += '<tr>';
-                    htmlPdf += '<td style="text-align:center;"><img src="' + img + '" class="print-img-pdf"></td>';
-                    htmlPdf += '<td><strong style="font-family:monospace; font-size:12px;">' + cod + '</strong></td>';
-                    htmlPdf += '<td><span style="font-weight:bold; font-size:12px; color:#333;">' + nombre + '</span><br><small style="color:#777; font-weight:600;">Marca: ' + marca + '</small></td>';
-                    htmlPdf += '<td style="text-align:center; font-weight:bold;">' + stock + '</td>';
-                    htmlPdf += '<td style="text-align:right; font-weight:bold; font-size:13px; color:#166534;">' + precioFinal + '</td>';
-                    htmlPdf += '</tr>';
-                    totalContados++;
-                });
-                
-                htmlPdf += '</tbody></table>';
-                htmlPdf += '<div style="margin-top:15px; text-align:right; font-size:11px; color:#777; font-weight:500;">Total de productos cotizados: ' + totalContados + ' | Generado automáticamente desde Odoo.</div>';
-                htmlPdf += '</div>';
-                
-                let placeholder = document.getElementById('print-placeholder');
-                placeholder.innerHTML = htmlPdf;
-                window.print();
-                placeholder.innerHTML = '';
+                } catch (err) {
+                    alert('Ocurrió un inconveniente al armar el PDF. Por favor intenta de nuevo.');
+                    console.error(err);
+                }
             }
         </script></body></html>"""
 
