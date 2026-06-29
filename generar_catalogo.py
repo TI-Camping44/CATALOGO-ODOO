@@ -57,7 +57,6 @@ def main():
         # 3. PRODUCTOS
         print("Extrayendo productos...")
         filtros = [['sale_ok', '=', True], ['active', '=', True], ['company_id', '=', 1]]
-        # CAMBIO AQUÍ: image_256 para mejor resolución en tablets
         campos = ['id', 'name', 'default_code', 'qty_available', 'categ_id', 'product_brand_id', 'product_tmpl_id', 'image_256']
         
         products = models.execute_kw(DB, uid, API_KEY, 'product.product', 'search_read', [filtros], {'fields': campos, 'limit': 50000})
@@ -134,7 +133,7 @@ def main():
 
             if "DOBERMAN" in marca_str:
                 if "RIFLE" in desc: hoja = "DOBERMAN RIFLES"
-                if "MOCHILA" in desc: hoja = "DOBERMAN MOCHILAS"
+                if "MOCHIL" in desc: hoja = "DOBERMAN MOCHILAS"
                 if "BOTA" in desc: hoja = "DOBERMAN BOTAS"
                 if "LINTERNA" in desc: hoja = "DOBERMAN LINTERNAS"
                 if "BALIN" in desc: hoja = "DOBERMAN BALINES"
@@ -155,7 +154,7 @@ def main():
 
             categorias_datos[hoja].append(p)
 
-        # 5. CONSTRUIR HTML (Estética adaptada a Tablets y clientes)
+        # 5. CONSTRUIR HTML
         html = f"""
         <!DOCTYPE html>
         <html lang="es">
@@ -173,8 +172,9 @@ def main():
                 .table thead th {{ background-color: #081226; color: white; position: sticky; top: 0; z-index: 1; padding: 15px; font-size: 1.1rem; }}
                 .nav-pills .nav-link {{ color: #081226; font-size: 1.1rem; padding: 10px 20px; font-weight: 500; border-radius: 30px; border: 1px solid #dee2e6; }}
                 .nav-pills .nav-link.active {{ background-color: #081226; color: white; border-color: #081226; }}
-                .producto-img {{ width: 120px; height: 120px; object-fit: contain; background: white; padding: 5px; }}
-                .table td {{ padding: 15px 10px; font-size: 1.05rem; }}
+                /* CAMBIO: Fotos más grandes para visualización en Tablets */
+                .producto-img {{ width: 180px; height: 180px; object-fit: contain; background: white; padding: 8px; }}
+                .table td {{ padding: 12px 10px; font-size: 1.1rem; }}
             </style>
         </head>
         <body>
@@ -219,7 +219,7 @@ def main():
                             <table class="table table-hover align-middle mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-center" style="width: 140px;">IMAGEN</th>
+                                        <th class="text-center" style="width: 200px;">IMAGEN</th>
                                         <th>CÓDIGO</th>
                                         <th style="min-width: 250px;">DESCRIPCIÓN</th>
                                         <th class="text-center">STOCK</th>
@@ -237,7 +237,6 @@ def main():
 
             for p in productos_hoja:
                 img_data = p.get('image_256')
-                
                 if img_data:
                     img_base64 = img_data.decode("utf-8") if isinstance(img_data, bytes) else img_data
                     img_tag = f'<img src="data:image/png;base64,{img_base64}" class="producto-img rounded shadow-sm border" loading="lazy" alt="Producto">'
@@ -254,8 +253,19 @@ def main():
                                         <td class="fw-semibold text-dark">{p.get('name', '')}</td>
                                         <td class="text-center fw-bold fs-5 {stock_class} rounded-3">{int(stock_val)}</td>
                 """
-                for precio in p['lista_precios_vals']:
-                    html += f'<td class="text-end text-success fw-bold fs-5 text-nowrap">${float(precio):,.2f}</td>'
+                
+                # CAMBIO: Mapeo inteligente de precios (Guaraníes vs Dólares)
+                for idx, precio in enumerate(p['lista_precios_vals']):
+                    pl_name = pricelists[idx]["name_clean"]
+                    precio_val = float(precio)
+                    
+                    if "USD" in pl_name:
+                        precio_html = f"US$ {precio_val:,.2f}"
+                    else:
+                        # Formato estricto PYG: Redondea, quita centavos (,00) y usa puntos para miles
+                        precio_html = f"{int(round(precio_val)):,}".replace(",", ".") + " Gs."
+                        
+                    html += f'<td class="text-end text-success fw-bold fs-5 text-nowrap">{precio_html}</td>'
                 
                 html += f"""
                                         <td><span class="badge bg-light text-dark border p-2">{p['categoria_limpia']}</span></td>
