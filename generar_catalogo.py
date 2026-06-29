@@ -7,8 +7,6 @@ DB = os.environ.get("ODOO_DB")
 USER = os.environ.get("ODOO_USER")
 API_KEY = os.environ.get("ODOO_API_KEY")
 
-# ID de la Lista de Precios por defecto (la tarifa que usa tu Odoo)
-# Nota: Si luego quieres otra tarifa específica, cambiaremos este número
 TARIFA_ID = 1 
 
 try:
@@ -21,10 +19,10 @@ try:
 
     # 3. Buscar productos activos que se puedan vender
     filtros = [['sale_ok', '=', True]]
-    productos_ids = models.execute_kw(DB, uid, API_KEY, 'product.product', 'search', [filtros], {'limit': 150}) # Limitado a 150 para la primera prueba
+    productos_ids = models.execute_kw(DB, uid, API_KEY, 'product.product', 'search', [filtros], {'limit': 150})
 
-    # 4. Leer los datos pasando el contexto de la tarifa para calcular el precio dinámico
-    campos = ['default_code', 'name', 'price', 'image_128']
+    # 4. CORRECCIÓN AQUÍ: Usamos list_price en lugar de price
+    campos = ['default_code', 'name', 'list_price', 'image_128']
     contexto = {'context': {'pricelist': TARIFA_ID}}
     productos = models.execute_kw(DB, uid, API_KEY, 'product.product', 'read', [productos_ids, campos], contexto)
 
@@ -59,10 +57,9 @@ try:
     """
 
     for p in productos:
-        # Procesar imagen de Odoo (viene en base64)
+        # Procesar imagen de Odoo
         img_data = p.get('image_128')
         if img_data:
-            # Si viene como string binario o limpio, lo manejamos directo
             if isinstance(img_data, bytes):
                 img_data = img_data.decode('utf-8')
             img_tag = f'<img src="data:image/png;base64,{img_data}" class="img-thumbnail" style="width: 64px; height: 64px; object-fit: cover;">'
@@ -71,7 +68,8 @@ try:
             
         codigo = p.get('default_code') or '-'
         nombre = p.get('name', 'Producto sin nombre')
-        precio = p.get('price', 0.0)
+        # CORRECCIÓN AQUÍ: Capturamos list_price
+        precio = p.get('list_price', 0.0)
         
         html += f"""
                             <tr>
@@ -92,7 +90,6 @@ try:
     </html>
     """
 
-    # Guardar el archivo index.html en la raíz del repositorio
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
 
