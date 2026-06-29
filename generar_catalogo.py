@@ -152,11 +152,10 @@ def main():
             categorias_datos[hoja].append(p)
             categorias_datos["Todo"].append(p)
 
-        # 5. ESTRUCTURA HTML DEFINITIVA (Con Logo integrado en Web y PDF)
+        # 5. ESTRUCTURA HTML DEFINITIVA
         print("Armando interfaz de catálogo con logo...")
-        html = "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'></script><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:60px;}.stock-rojo{background-color:#FECACA!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#BBF7D0!important;color:#166534;}.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.nav-pills .nav-link{color:#081226;font-size:1.05rem;padding:8px 18px;font-weight:500;border-radius:30px;border:1px solid #dee2e6;display:inline-block;}.nav-pills .nav-link.active{background-color:#081226;color:white;border-color:#081226;}/* Imagen de catálogo gigante */.producto-img{width:100%;height:220px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:16px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:none;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.12)!important;}.price-box{background:#f8f9fa;border-radius:8px;padding:5px;font-size:0.82rem;text-align:center;border:1px solid #e9ecef;}/* Botón volver arriba */.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}/* Reglas especiales exclusivas para cuando se genera el PDF */@media print{body{background:#fff;padding:0;}/* Oculta toda la web interactiva y el encabezado web */#buscadorWeb,#pills-tab,.btn-back-to-top,.row-controles,.nav-scroll-container,.row-encabezado-web{display:none!important;}.tab-pane{display:block!important;opacity:1!important;}.row{display:block!important;}#print-section{display:block!important;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:11px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><button onclick='window.scrollTo({top:0,behavior:\"smooth\"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid py-3'><div class='row align-items-center mb-4 row-encabezado-web'><div class='col-4 text-start'><img src='LOCOC44.png' alt='Camping 44 Logo' style='height: 60px;'></div><div class='col-8 text-center'><h3 class='fw-bold mb-0 text-center' style='color:#081226;'>Catálogo de Precios - Camping 44</h3></div></div><div class='row row-controles g-2 justify-content-center mb-3'><div class='col-12 col-md-5'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1.1rem;'></div><div class='col-7 col-md-3'><select id='selectTarifaPDF' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value=''>-- Seleccionar Tarifa para PDF --</option>"
+        html = "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title><link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'><script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'></script><style>body{background-color:#f4f6f9;font-family:'Segoe UI',sans-serif;padding-bottom:60px;}.stock-rojo{background-color:#FECACA!important;color:#991B1B;}.stock-amarillo{background-color:#FEF3C7!important;color:#92400E;}.stock-verde{background-color:#BBF7D0!important;color:#166534;}.nav-scroll-container{overflow-x:auto;white-space:nowrap;display:flex;flex-wrap:nowrap;padding:10px 5px;gap:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}.nav-scroll-container::-webkit-scrollbar{display:none;}.nav-pills .nav-link{color:#081226;font-size:1.05rem;padding:8px 18px;font-weight:500;border-radius:30px;border:1px solid #dee2e6;display:inline-block;}.nav-pills .nav-link.active{background-color:#081226;color:white;border-color:#081226;}.producto-img{width:100%;height:220px;object-fit:contain;background:white;padding:10px;}.card-producto{border-radius:16px;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;background:#fff;border:none;height:100%;}.card-producto:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.12)!important;}.price-box{background:#f8f9fa;border-radius:8px;padding:5px;font-size:0.82rem;text-align:center;border:1px solid #e9ecef;}.btn-back-to-top{position:fixed;bottom:25px;right:25px;width:50px;height:50px;border-radius:50%;background-color:#081226;color:white;border:none;box-shadow:0 4px 10px rgba(0,0,0,0.3);display:none;justify-content:center;align-items:center;z-index:1000;font-size:1.5rem;cursor:pointer;}@media print{body{background:#fff;padding:0;}#buscadorWeb,#pills-tab,.btn-back-to-top,.row-controles,.nav-scroll-container,.row-encabezado-web{display:none!important;}.tab-pane{display:block!important;opacity:1!important;}.row{display:block!important;}#print-section{display:block!important;}.print-table{width:100%!important;border-collapse:collapse!important;margin-top:20px;}.print-table th{background-color:#081226!important;color:white!important;padding:10px;border:1px solid #ddd;font-size:11px;text-transform:uppercase;}.print-table td{padding:8px;border:1px solid #ddd;font-size:11px;vertical-align:middle;}.print-img-pdf{width:70px!important;height:70px!important;object-fit:contain;} }</style></head><body><button onclick='window.scrollTo({top:0,behavior:\"smooth\"})' id='backToTop' class='btn-back-to-top' title='Volver arriba'>↑</button><div class='container-fluid py-3'><div class='row align-items-center mb-4 row-encabezado-web'><div class='col-4 text-start'><img src='LOCOC44.png' alt='Camping 44 Logo' style='height: 60px;'></div><div class='col-8 text-center'><h3 class='fw-bold mb-0 text-center' style='color:#081226;'>Catálogo de Precios - Camping 44</h3></div></div><div class='row row-controles g-2 justify-content-center mb-3'><div class='col-12 col-md-5'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1.1rem;'></div><div class='col-7 col-md-3'><select id='selectTarifaPDF' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value=''>-- Seleccionar Tarifa para PDF --</option>"
         
-        # Cargar las opciones del PDF de forma dinámica
         for pl in pricelists:
             html += f"<option value='{pl['name_clean']}'>Exportar Tarifa {pl['name_clean']}</option>"
             
@@ -164,7 +163,9 @@ def main():
         
         first_tab = True
         for hoja in orden_hojas:
-            if not pandas_clone := categorias_datos[hoja]: continue
+            # CORRECCIÓN AQUÍ: Separado en dos instrucciones limpias para evitar fallos de sintaxis
+            pandas_clone = categorias_datos[hoja]
+            if not pandas_clone: continue
             active_class = "active" if first_tab else ""
             html += f"<li class='nav-item' role='presentation'><button class='nav-link {active_class}' id='pills-{hoja.replace(' ', '').replace('.','')}-tab' data-bs-toggle='pill' data-bs-target='#pills-{hoja.replace(' ', '').replace('.','')}' type='button' role='tab' data-hoja-name='{hoja}'>{hoja} ({len(pandas_clone)})</button></li>"
             first_tab = False
@@ -177,7 +178,7 @@ def main():
             if not productos_hoja: continue
             
             active_class = "show active" if first_content else ""
-            html += f"<div class='tab-pane fade {active_class}' id='pills-{hoja.replace(' ', '').replace('.','')}' role='tabpanel'><div class='row row-productos g-3' style='padding:5px;'>"
+            html += f"<div class='tab-pane fade {active_class}' id='pills-{hoja.replace(' ', '').replace('.','')}' role='tabpanel'><div class='row row-productos g-3' style='padding:5px Triton;'>"
             
             for p in productos_hoja:
                 img_data = p.get('image_256')
@@ -209,7 +210,6 @@ def main():
 
         html += """</div></div><div id='print-placeholder'></div>
         <script>
-            // Mostrar/Ocultar botón Volver Arriba
             window.onscroll = function() {
                 let btn = document.getElementById('backToTop');
                 if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
@@ -219,7 +219,6 @@ def main():
                 }
             };
 
-            // Buscador Inteligente que muda a "Todo"
             document.getElementById('buscadorWeb').addEventListener('input', function() {
                 let f = this.value.toUpperCase();
                 if (f.trim() !== '') {
@@ -235,7 +234,6 @@ def main():
                 });
             });
 
-            // Función Maestra para generar el PDF a medida de 1 sola Tarifa (Con Logo integrado)
             function generarPDFCotizacion() {
                 let tarifa = document.getElementById('selectTarifaPDF').value;
                 if (!tarifa) {
