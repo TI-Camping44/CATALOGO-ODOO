@@ -63,6 +63,23 @@ def main():
         campos = ['id', 'name', 'default_code', 'qty_available', 'categ_id', 'product_brand_id', 'product_tmpl_id', 'image_256']
         products = models.execute_kw(DB, uid, API_KEY, 'product.product', 'search_read', [filtros], {'fields': campos, 'limit': 50000})
 
+        # =========================================================
+        # NUEVO MÓDULO: DETECCIÓN Y RESTA DE STOCK EN "NSE"
+        # =========================================================
+        print("Calculando y descontando productos perdidos en ubicación NSE...")
+        nse_locs = models.execute_kw(DB, uid, API_KEY, 'stock.location', 'search', [[['complete_name', 'ilike', 'NSE']]])
+        nse_stock = {}
+        
+        if nse_locs:
+            quants = models.execute_kw(DB, uid, API_KEY, 'stock.quant', 'search_read', 
+                [[['location_id', 'in', nse_locs]]], 
+                {'fields': ['product_id', 'quantity']})
+                
+            for q in quants:
+                if q.get('product_id'):
+                    pid = q['product_id'][0] if isinstance(q['product_id'], list) else q['product_id']
+                    nse_stock[pid] = nse_stock.get(pid, 0.0) + float(q.get('quantity', 0.0))
+
         stock_salon = {
             "501048": 20000, "501113": 15000, "501121": 20000, "501333": 5000,
             "501366": 20000, "501379": 20000, "501493": 13000, "501505": 20000,
@@ -90,8 +107,18 @@ def main():
             categoria_str = p['categ_id'][1].upper() if p.get('categ_id') else ""
             if "VITALICA" in categoria_str: continue
 
+            # LÓGICA DE DESCUENTO DE STOCK
             stock = float(p.get('qty_available') or 0.0)
-            if ref in stock_salon: stock = max(0, stock - stock_salon[ref])
+            
+            # 1. Restar stock de salón fijo
+            if ref in stock_salon: 
+                stock = stock - stock_salon[ref]
+                
+            # 2. Restar stock de la ubicación "NSE" (Productos perdidos)
+            if p['id'] in nse_stock:
+                stock = stock - nse_stock[p['id']]
+                
+            # Si después de las restas no queda stock real, saltear el producto
             if stock <= 0: continue
 
             tmpl_id = p['product_tmpl_id'][0] if p.get('product_tmpl_id') else 0
@@ -418,7 +445,7 @@ def main():
 
                 let btnPdf = document.getElementById('btnGenerarPDF');
                 let originalText = btnPdf.innerHTML;
-                btnPdf.innerHTML = '⏳ Procesando Archivo...';
+                btnPdf.innerHTML = '⏳ Procesando...';
                 btnPdf.disabled = true;
 
                 setTimeout(() => {
@@ -428,23 +455,21 @@ def main():
                         let mostrarStock = document.getElementById('chkMostrarStock').checked;
                         let logoBase64 = '##LOGO_HTML##';
                         
-                        // CABECERA DEL PDF CON LÓGICA DE PROPORCIÓN PARA EL LOGO
                         let textX = 14;
                         if (logoBase64.length > 100) {
                             try {
                                 let imgProps = doc.getImageProperties(logoBase64);
                                 let imgRatio = imgProps.height / imgProps.width;
-                                let targetWidth = 45; // Ancho máximo
+                                let targetWidth = 45; 
                                 let targetHeight = targetWidth * imgRatio;
                                 
-                                // Si el logo queda muy alto, lo achicamos para no invadir la hoja
                                 if (targetHeight > 18) {
                                     targetHeight = 18;
                                     targetWidth = targetHeight / imgRatio;
                                 }
                                 
                                 doc.addImage(logoBase64, 'PNG', 14, 10, targetWidth, targetHeight);
-                                textX = 14 + targetWidth + 5; // Acomodamos el texto para que no se pise con la foto
+                                textX = 14 + targetWidth + 5; 
                             } catch(e) {
                                 doc.addImage(logoBase64, 'PNG', 14, 10, 40, 15);
                                 textX = 60;
@@ -479,7 +504,6 @@ def main():
                             startY = 50;
                         }
 
-                        // PREPARAR DATOS PARA LA TABLA
                         let columnas = ["Img", "Código", "Descripción"];
                         if (mostrarStock) columnas.push("Stock");
                         tarifasSeleccionadas.forEach(t => columnas.push(t));
@@ -503,7 +527,7 @@ def main():
                             if (!tienePrecio) return; 
 
                             let row = [];
-                            row.push(""); // Espacio para la foto
+                            row.push(""); 
                             row.push(p.c);
                             row.push(p.n + "\\nMarca: " + p.m);
                             
@@ -514,7 +538,6 @@ def main():
                             imagenesFila.push(p.i);
                         });
 
-                        // DIBUJAR TABLA
                         doc.autoTable({
                             head: [columnas],
                             body: filas,
@@ -542,7 +565,6 @@ def main():
                             }
                         });
 
-                        // DESCARGA AUTOMÁTICA
                         doc.save("Cotizacion_Camping44_" + stateCat.replace(/[^a-zA-Z0-9]/g, "") + ".pdf");
 
                         btnPdf.innerHTML = originalText;
