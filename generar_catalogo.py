@@ -63,9 +63,6 @@ def main():
         campos = ['id', 'name', 'default_code', 'qty_available', 'categ_id', 'product_brand_id', 'product_tmpl_id', 'image_256']
         products = models.execute_kw(DB, uid, API_KEY, 'product.product', 'search_read', [filtros], {'fields': campos, 'limit': 50000})
 
-        # =========================================================
-        # NUEVO MÓDULO: DETECCIÓN Y RESTA DE STOCK EN "NSE"
-        # =========================================================
         print("Calculando y descontando productos perdidos en ubicación NSE...")
         nse_locs = models.execute_kw(DB, uid, API_KEY, 'stock.location', 'search', [[['complete_name', 'ilike', 'NSE']]])
         nse_stock = {}
@@ -107,18 +104,9 @@ def main():
             categoria_str = p['categ_id'][1].upper() if p.get('categ_id') else ""
             if "VITALICA" in categoria_str: continue
 
-            # LÓGICA DE DESCUENTO DE STOCK
             stock = float(p.get('qty_available') or 0.0)
-            
-            # 1. Restar stock de salón fijo
-            if ref in stock_salon: 
-                stock = stock - stock_salon[ref]
-                
-            # 2. Restar stock de la ubicación "NSE" (Productos perdidos)
-            if p['id'] in nse_stock:
-                stock = stock - nse_stock[p['id']]
-                
-            # Si después de las restas no queda stock real, saltear el producto
+            if ref in stock_salon: stock = stock - stock_salon[ref]
+            if p['id'] in nse_stock: stock = stock - nse_stock[p['id']]
             if stock <= 0: continue
 
             tmpl_id = p['product_tmpl_id'][0] if p.get('product_tmpl_id') else 0
@@ -182,15 +170,23 @@ def main():
             categorias_datos[hoja].append(p)
             categorias_datos["Todo"].append(p)
 
-        print("Creando Base de Datos Liviana...")
+        print("Creando Base de Datos Liviana y Lógica de Ordenamiento...")
         productos_js = []
         for p in categorias_datos["Todo"]:
+            # Identificar el primer precio válido para poder usarlo como referencia en el Ordenamiento por Precio
+            base_price = 0.0
+            for val in p['lista_precios_vals']:
+                if float(val or 0.0) > 0:
+                    base_price = float(val)
+                    break
+
             prod_dict = {
                 "c": p.get('default_code', '-'),
                 "n": p.get('name', ''),
                 "m": p['marca_limpia'],
                 "s": int(p['stock_calculado']),
                 "h": p['hoja_asignada'],
+                "pr": base_price, # Valor numérico crudo para ordenar
                 "p": {}
             }
             
@@ -244,10 +240,13 @@ def main():
             html += f"<li class='nav-item'><button class='btn-filtro {active_class}' data-filtro='{hoja}'>📦 {hoja} ({len(pandas_clone)})</button></li>"
             first_tab = False
 
-        html += """</ul></div><div class='col-12 col-lg-10 py-3'><div class='row align-items-center mb-3 d-lg-none row-encabezado-web'><div class='col-4 text-start'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height: 45px; max-width:140px; object-fit:contain;'></div><div class='col-8 text-end'><h4 class='fw-bold mb-0 text-dark' style='letter-spacing:-0.5px;'>Catálogo Digital</h4></div></div><div class='mb-3'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1.05rem;'></div>"""
+        html += """</ul></div><div class='col-12 col-lg-10 py-3'><div class='row align-items-center mb-3 d-lg-none row-encabezado-web'><div class='col-4 text-start'><img src='##LOGO_HTML##' alt='Camping 44 Logo' style='height: 45px; max-width:140px; object-fit:contain;'></div><div class='col-8 text-end'><h4 class='fw-bold mb-0 text-dark' style='letter-spacing:-0.5px;'>Catálogo Digital</h4></div></div>"""
         
         html = html.replace('##LOGO_HTML##', logo_html)
         
+        # NUEVA BARRA BÚSQUEDA Y ORDENAMIENTO AL LADO
+        html += """<div class='row g-2 mb-3'><div class='col-12 col-md-8'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar en TODO el catálogo...' style='font-size:1.05rem;'></div><div class='col-12 col-md-4'><select id='ordenarPor' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value='default'>⇅ Ordenar por...</option><option value='az'>🔤 A - Z (Alfabético)</option><option value='za'>🔤 Z - A (Alfabético)</option><option value='stock_desc'>📦 Mayor Stock</option><option value='stock_asc'>📦 Menor Stock</option><option value='precio_asc'>💲 Menor Precio</option><option value='precio_desc'>💲 Mayor Precio</option></select></div></div>"""
+
         # PANEL PDF INLINE
         html += """<div class='pdf-panel shadow-sm mb-3'><div class='check-group'><span class='pdf-panel-title'>📄 DESCARGAR PDF:</span>"""
         
@@ -281,12 +280,15 @@ def main():
             let stateCat = 'Todo';
             let stateSearch = '';
             let stateTarifa = 'Todas';
+            let stateSort = 'default';
             let productosFiltrados = [];
             let paginaActual = 0;
             const ITEMS_POR_PAGINA = 30; 
 
             function aplicarFiltros() {
                 let q = stateSearch.toUpperCase().trim();
+                
+                // 1. Filtrado
                 productosFiltrados = PRODUCTOS.filter(p => {
                     let matchCat = (stateCat === 'Todo' || p.h === stateCat);
                     let matchSearch = (q === '' || p.n.toUpperCase().includes(q) || p.c.toUpperCase().includes(q));
@@ -297,10 +299,32 @@ def main():
                     return matchCat && matchSearch && matchTarifa;
                 });
                 
+                // 2. Ordenamiento Dinámico
+                if (stateSort === 'az') {
+                    productosFiltrados.sort((a, b) => a.n.localeCompare(b.n));
+                } else if (stateSort === 'za') {
+                    productosFiltrados.sort((a, b) => b.n.localeCompare(a.n));
+                } else if (stateSort === 'stock_desc') {
+                    productosFiltrados.sort((a, b) => b.s - a.s);
+                } else if (stateSort === 'stock_asc') {
+                    productosFiltrados.sort((a, b) => a.s - b.s);
+                } else if (stateSort === 'precio_asc') {
+                    productosFiltrados.sort((a, b) => a.pr - b.pr);
+                } else if (stateSort === 'precio_desc') {
+                    productosFiltrados.sort((a, b) => b.pr - a.pr);
+                }
+                
                 paginaActual = 0;
                 document.getElementById('grilla-productos').innerHTML = '';
                 renderizarPagina();
             }
+
+            // LISTENER DEL DROPDOWN DE ORDENAMIENTO
+            document.getElementById('ordenarPor').addEventListener('change', function() {
+                stateSort = this.value;
+                aplicarFiltros();
+                window.scrollTo({top: 0});
+            });
 
             function renderizarPagina() {
                 let start = paginaActual * ITEMS_POR_PAGINA;
@@ -428,7 +452,6 @@ def main():
                 "APOLO": "DIST 1: Monto Mínimo Gs. 10.000.000  |  DIST 2: Monto Mínimo Gs. 20.000.000"
             };
 
-            // GENERADOR DE PDF NATIVO CON CONTROL DE PROPORCIÓN DEL LOGO
             function descargarPDFNativo() {
                 let checkboxes = document.querySelectorAll('.check-tarifa-pdf:checked');
                 let tarifasSeleccionadas = Array.from(checkboxes).map(cb => cb.value);
@@ -445,7 +468,7 @@ def main():
 
                 let btnPdf = document.getElementById('btnGenerarPDF');
                 let originalText = btnPdf.innerHTML;
-                btnPdf.innerHTML = '⏳ Procesando...';
+                btnPdf.innerHTML = '⏳ Procesando Archivo...';
                 btnPdf.disabled = true;
 
                 setTimeout(() => {
@@ -511,6 +534,7 @@ def main():
                         let filas = [];
                         let imagenesFila = [];
 
+                        // Exportamos los productos YA FILTRADOS Y ORDENADOS por el usuario
                         productosFiltrados.forEach(p => {
                             let preciosFila = [];
                             let tienePrecio = false;
@@ -587,7 +611,7 @@ def main():
             f.write(html)
             
         peso_final = os.path.getsize("index.html") / (1024 * 1024)
-        print(f"¡Catálogo VIRTUAL con Logo Proporcional optimizado con éxito! Peso: {peso_final:.2f} MB")
+        print(f"¡Catálogo VIRTUAL con Ordenamiento optimizado con éxito! Peso: {peso_final:.2f} MB")
 
     except Exception as e:
         print(f"Error general: {e}")
