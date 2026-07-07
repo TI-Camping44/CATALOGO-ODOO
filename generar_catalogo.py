@@ -55,9 +55,9 @@ def main():
             elif "MAYGS" in raw_name: nombre = "MAYGS"
             elif "SALGS" in raw_name: nombre = "SALGS"
             
-            if nombre:
-                # SI ENCUENTRA LA MISMA LISTA DOS VECES, SIEMPRE SE QUEDA CON LA QUE TIENE "(PYG)"
-                if nombre not in pricelists_dict or "PYG" in raw_name:
+            if nombre in listas_permitidas:
+                # SI LA LISTA YA ESTÁ GUARDADA, SOLO LA REEMPLAZAMOS SI LA NUEVA TIENE (PYG)
+                if nombre not in pricelists_dict or "(PYG)" in raw_name:
                     pl['name_clean'] = nombre
                     pricelists_dict[nombre] = pl
                     
@@ -82,6 +82,7 @@ def main():
             if not pl_id: continue
             
             precio = float(item.get('fixed_price') or 0.0)
+            if precio <= 0: continue
             
             tmpl_id = item.get('product_tmpl_id')
             if tmpl_id:
