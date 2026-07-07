@@ -32,7 +32,7 @@ def main():
                 logo_base64 = logo_base64.decode('utf-8')
 
         pl_data = models.execute_kw(DB, uid, API_KEY, 'product.pricelist', 'search_read',
-            [[['active', '=', True]]], {'fields': ['id', 'name'], 'limit': 500})
+            [[]], {'fields': ['id', 'name'], 'limit': 500})
         
         if not isinstance(pl_data, list):
             pl_data = []
@@ -43,20 +43,19 @@ def main():
         for pl in pl_data:
             raw_name = str(pl.get('name') or "").upper().strip()
             
-            # IGNORA SI ES USD O VIEJA
-            if "USD" in raw_name or "PROMO" in raw_name or "DIA CONTI" in raw_name: 
-                continue
-
-            nombre = None
-            if "DIST" in raw_name and "1" in raw_name: nombre = "DIST 1"
-            elif "DIST" in raw_name and "2" in raw_name: nombre = "DIST 2"
-            elif "CONGS" in raw_name: nombre = "CONGS"
-            elif "CREGS" in raw_name: nombre = "CREGS"
-            elif "MAYGS" in raw_name: nombre = "MAYGS"
-            elif "SALGS" in raw_name: nombre = "SALGS"
+            # FILTRO FRANCOTIRADOR: Le saco los espacios y pido exactitud
+            r_name = raw_name.replace(" ", "")
             
-            if nombre in listas_permitidas:
-                # SI LA LISTA YA ESTÁ GUARDADA, SOLO LA REEMPLAZAMOS SI LA NUEVA TIENE (PYG)
+            nombre = None
+            if r_name in ["DIST1", "DIST1(PYG)"]: nombre = "DIST 1"
+            elif r_name in ["DIST2", "DIST2(PYG)"]: nombre = "DIST 2"
+            elif r_name in ["CONGS", "CONGS(PYG)"]: nombre = "CONGS"
+            elif r_name in ["CREGS", "CREGS(PYG)"]: nombre = "CREGS"
+            elif r_name in ["MAYGS", "MAYGS(PYG)"]: nombre = "MAYGS"
+            elif r_name in ["SALGS", "SALGS(PYG)"]: nombre = "SALGS"
+            
+            if nombre:
+                # Si es (PYG) pisa lo que sea. Si la nueva NO es PYG, la ignora para proteger la posta.
                 if nombre not in pricelists_dict or "(PYG)" in raw_name:
                     pl['name_clean'] = nombre
                     pricelists_dict[nombre] = pl
@@ -66,7 +65,6 @@ def main():
         pl_ids_to_fetch = [pl['id'] for pl in pricelists]
 
         print(f"Extrayendo items SOLO para las {len(pl_ids_to_fetch)} listas oficiales...")
-        # ACA ESTÁ EL TRUCO: LE PIDE A ODOO SOLO LAS LISTAS CORRECTAS PARA NO AHOGARLO
         pl_items = models.execute_kw(DB, uid, API_KEY, 'product.pricelist.item', 'search_read',
             [[['pricelist_id', 'in', pl_ids_to_fetch]]], 
             {'fields': ['pricelist_id', 'product_tmpl_id', 'product_id', 'fixed_price'], 'limit': 300000})
@@ -88,13 +86,13 @@ def main():
             if tmpl_id:
                 t_id = tmpl_id[0] if isinstance(tmpl_id, list) else tmpl_id
                 if t_id not in mapa_precios_tmpl: mapa_precios_tmpl[t_id] = {}
-                mapa_precios_tmpl[t_id][pl_id] = precio
+                mapa_precios_tmpl[t_id][pl_id] = max(precio, mapa_precios_tmpl[t_id].get(pl_id, 0.0))
                 
             prod_id = item.get('product_id')
             if prod_id:
                 p_id = prod_id[0] if isinstance(prod_id, list) else prod_id
                 if p_id not in mapa_precios_prod: mapa_precios_prod[p_id] = {}
-                mapa_precios_prod[p_id][pl_id] = precio
+                mapa_precios_prod[p_id][pl_id] = max(precio, mapa_precios_prod[p_id].get(pl_id, 0.0))
 
         print("Extrayendo productos base de Odoo (sin imágenes para no saturar)...")
         filtros = [['sale_ok', '=', True], ['active', '=', True], ['company_id', '=', 1]]
