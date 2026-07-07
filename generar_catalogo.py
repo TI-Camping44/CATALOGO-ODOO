@@ -44,9 +44,13 @@ def main():
 
         for pl in pl_data:
             raw_name = str(pl.get('name') or "").upper().strip()
-            nombre = raw_name
             
-            # Limpieza para que ignore el (PYG) o espacios raros de Odoo
+            # ¡EL ESCUDO ANTI-TRAMPAS! Si dice USD o PROMO, la ignora al instante
+            if "USD" in raw_name or "PROMO" in raw_name or "DIA CONTI" in raw_name: 
+                continue
+
+            nombre = raw_name
+            # Limpieza para que ignore el (PYG) o espacios raros
             if "DIST" in raw_name and "1" in raw_name: nombre = "DIST 1"
             elif "DIST" in raw_name and "2" in raw_name: nombre = "DIST 2"
             elif "CONGS" in raw_name: nombre = "CONGS"
