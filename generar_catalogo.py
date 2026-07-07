@@ -37,23 +37,26 @@ def main():
         if not isinstance(pl_data, list):
             pl_data = []
             
-        listas_excluir = ["DIA CONTI", "ALSK-ALQUILER DE OFICINA", "PROMO", "MAYS USD", "CRE USD", "DIST1 USD", "DIST2 USD", "SAL USD"]
+        # LISTA DE LAS ÚNICAS TARIFAS PERMITIDAS
+        listas_permitidas = ["CONGS", "DIST 1", "DIST 2", "CREGS", "MAYGS", "SALGS"]
         pricelists = []
         usados = set()
 
         for pl in pl_data:
             nombre = (pl.get('name') or "").upper().strip()
-            if nombre in listas_excluir: continue
+            
+            # Normalizar nombres por las dudas
             if nombre == "DIST1": nombre = "DIST 1"
             if nombre == "DIST2": nombre = "DIST 2"
             
-            if nombre not in usados:
+            # FILTRO ESTRICTO: Solo agrega la lista si está en 'listas_permitidas'
+            if nombre in listas_permitidas and nombre not in usados:
                 usados.add(nombre)
                 pl['name_clean'] = nombre
                 pricelists.append(pl)
 
-        orden_precios = ["CONGS", "DIST 1", "DIST 2", "CREGS", "MAYGS", "SALGS"]
-        pricelists.sort(key=lambda x: orden_precios.index(x['name_clean']) if x['name_clean'] in orden_precios else 999)
+        # Ordenar exactamente como pediste
+        pricelists.sort(key=lambda x: listas_permitidas.index(x['name_clean']))
 
         print("Extrayendo items de listas de precios...")
         pl_items = models.execute_kw(DB, uid, API_KEY, 'product.pricelist.item', 'search_read',
