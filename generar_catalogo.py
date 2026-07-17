@@ -7,6 +7,10 @@ import traceback
 # =====================================
 # CONFIGURACIÓN DIRECTA (CAMPING 44)
 # =====================================
+# NOTA (opcional, no cambia nada del funcionamiento): si algún día querés sacar
+# la API_KEY del código sin dejar de tener un solo archivo, en GitHub Actions
+# podés guardarla en Settings > Secrets y leerla con os.environ["ODOO_API_KEY"].
+# Por ahora se deja tal cual la tenías.
 URL = "https://camping44.odoo.com"
 DB = "gcaceres93-camping-main-15845610"
 USER = "facundocolman@camping44.com.py"
@@ -21,7 +25,6 @@ def main():
         common = xmlrpc.client.ServerProxy(f'{URL}/xmlrpc/2/common')
         uid = common.authenticate(DB, USER, API_KEY, {})
         models = xmlrpc.client.ServerProxy(f'{URL}/xmlrpc/2/object')
-
         print("Conectado a Odoo exitosamente. Extrayendo datos de la empresa...")
         comp_data = models.execute_kw(DB, uid, API_KEY, 'res.company', 'search_read', [[['id', '=', 1]]], {'fields': ['logo_web']})
         logo_base64 = ""
@@ -29,14 +32,12 @@ def main():
             logo_base64 = comp_data[0]['logo_web']
             if isinstance(logo_base64, bytes):
                 logo_base64 = logo_base64.decode('utf-8')
-
         print("Extrayendo listas de precios...")
         pl_data = models.execute_kw(DB, uid, API_KEY, 'product.pricelist', 'search_read',
             [[['company_id', '=', 1]]], {'fields': ['id', 'name'], 'limit': 500})
         
         if not isinstance(pl_data, list):
             pl_data = []
-
         pl_name_mapping = {}
         for pl in pl_data:
             raw_name = str(pl.get('name') or "").upper().strip()
@@ -53,18 +54,14 @@ def main():
             
             if nombre:
                 pl_name_mapping[pl['id']] = nombre
-
         orden_precios = ["CONGS", "DIST 1", "DIST 2", "CREGS", "MAYGS", "SALGS"]
-
         print("Extrayendo items de listas de precios (AMPLIADO Y BLINDADO ANTI-CEROS)...")
         pl_ids_to_fetch = list(pl_name_mapping.keys())
         pl_items = models.execute_kw(DB, uid, API_KEY, 'product.pricelist.item', 'search_read',
             [[['pricelist_id', 'in', pl_ids_to_fetch]]], 
             {'fields': ['pricelist_id', 'product_tmpl_id', 'product_id', 'fixed_price'], 'limit': 300000})
-
         if not isinstance(pl_items, list):
             pl_items = []
-
         mapa_precios_tmpl = {}
         mapa_precios_prod = {}
         
@@ -87,15 +84,12 @@ def main():
                 p_id = prod_id[0] if isinstance(prod_id, list) else prod_id
                 if p_id not in mapa_precios_prod: mapa_precios_prod[p_id] = {}
                 mapa_precios_prod[p_id][nombre_tarifa] = max(precio, mapa_precios_prod[p_id].get(nombre_tarifa, 0.0))
-
         print("Extrayendo productos base de Odoo...")
         filtros = [['sale_ok', '=', True], ['active', '=', True], ['company_id', '=', 1]]
         campos = ['id', 'name', 'default_code', 'qty_available', 'categ_id', 'product_brand_id', 'product_tmpl_id']
         products = models.execute_kw(DB, uid, API_KEY, 'product.product', 'search_read', [filtros], {'fields': campos, 'limit': 50000})
-
         if not isinstance(products, list):
             products = []
-
         print(f"Se encontraron {len(products)} productos. Extrayendo imágenes en lotes pequeños...")
         product_ids = [p['id'] for p in products]
         imagenes_dict = {}
@@ -111,8 +105,8 @@ def main():
                             val = img['image_128']
                             imagenes_dict[img['id']] = val.decode('utf-8') if isinstance(val, bytes) else val
             except Exception as e_chunk:
-                pass
-
+                # MEJORA 1: antes hacía 'pass' y perdías el lote en silencio. Ahora avisa.
+                print(f"  ! Aviso: falló un lote de imágenes ({i}-{i+chunk_size}): {e_chunk}")
         print("Calculando stock de la ubicación exacta de NSE (No Se Encuentra)...")
         nse_locs = models.execute_kw(DB, uid, API_KEY, 'stock.location', 'search', [[['name', '=', 'NSE']]])
         if not isinstance(nse_locs, list): nse_locs = []
@@ -127,7 +121,6 @@ def main():
                 if q.get('product_id'):
                     pid = q['product_id'][0] if isinstance(q['product_id'], list) else q['product_id']
                     nse_stock[pid] = nse_stock.get(pid, 0.0) + float(q.get('quantity', 0.0))
-
         categorias_datos = {}
         orden_hojas = [
             "Todo", "🔥 LIQUIDACIÓN", "Municiones", "Armas", "Cargadores", "ASG", "TSS", "CROSMAN", "UMAREX",
@@ -137,26 +130,21 @@ def main():
             "FOBUS", "BERETTA MOD", "B.E ARMOR", "OTRO"
         ]
         for hoja in orden_hojas: categorias_datos[hoja] = []
-
         print("Filtrando catálogo MAYORISTA...")
         for p in products:
             ref = str(p.get('default_code') or "").upper().strip()
             if ref.startswith("AVE") or ref.startswith("NSE") or ref.startswith("INT"): continue
-
             categoria_str = p['categ_id'][1].upper() if p.get('categ_id') else ""
             desc = str(p.get('name') or "").upper()
             
             palabras_bloqueadas = ["VITALICA", "RRHH", "UNIFORME", "SERVICIO TECNICO", "GASTO", "CONSUMO INTERNO", "ACTIVO FIJO", "OFICINA"]
             if any(pb in categoria_str or pb in desc for pb in palabras_bloqueadas): continue
-
             # STOCK REAL DE ODOO (Sin descuentos raros de SR44)
             stock = float(p.get('qty_available') or 0.0)
             if p['id'] in nse_stock: stock = stock - nse_stock[p['id']]
-
             tmpl_id = p['product_tmpl_id'][0] if p.get('product_tmpl_id') else 0
             prod_id = p['id']
             marca_str = p['product_brand_id'][1].upper() if p.get('product_brand_id') else "SIN MARCA"
-
             # ASEGURAMOS QUE LAS ARMAS TENGAN PRECIO MAYGS (COMO ES MAYORISTA)
             es_arma = "ARMA" in categoria_str and "ACCESORIO" not in categoria_str
             if es_arma:
@@ -164,9 +152,7 @@ def main():
                 if not precio_maygs or precio_maygs <= 0:
                     precio_maygs = mapa_precios_tmpl.get(tmpl_id, {}).get("MAYGS", 0.0)
                 if float(precio_maygs or 0) <= 0: continue
-
             es_liquidacion = ref in PRECIOS_LIQUIDACION_EXACTOS or any(palabra in categoria_str or palabra in desc for palabra in ["LIQUIDACION", "LIQUIDACIÓN", "OUTLET"])
-
             hoja = "OTRO"
             if "MUNICION" in categoria_str: hoja = "Municiones"
             elif es_arma: hoja = "Armas"
@@ -193,17 +179,14 @@ def main():
             elif "FOBUS" in marca_str: hoja = "FOBUS"
             elif "BERETTA" in marca_str: hoja = "BERETTA MOD"
             elif "B.E" in marca_str: hoja = "B.E ARMOR"
-
             if "DOBERMAN" in marca_str:
                 if "RIFLE" in desc: hoja = "DOBERMAN RIFLES"
                 if "MOCHIL" in desc: hoja = "DOBERMAN MOCHILAS"
                 if "BOTA" in desc: hoja = "DOBERMAN BOTAS"
                 if "LINTERNA" in desc: hoja = "DOBERMAN LINTERNAS"
                 if "BALIN" in desc: hoja = "DOBERMAN BALINES"
-
             if "CARGADOR" in desc and not any(x in desc for x in ["PORTA", "BASE", "PISO", "ACOPLE"]) and not es_liquidacion: 
                 hoja = "Cargadores"
-
             p['stock_calculado'] = stock
             p['hoja_asignada'] = hoja
             p['marca_limpia'] = p['product_brand_id'][1] if p.get('product_brand_id') else "Sin Marca"
@@ -217,23 +200,29 @@ def main():
                 p_precios.append(float(p_val or 0.0))
                 
             p['lista_precios_vals'] = p_precios
-
             categorias_datos[hoja].append(p)
             categorias_datos["Todo"].append(p)
-
         print("Separando datos livianos...")
         productos_js = []
         imagenes_js = {} 
         
         for p in categorias_datos["Todo"]:
+            cod_limpio = str(p.get('default_code') or '-').strip()
+            nombre_limpio = str(p.get('name') or '')
+
             base_price = 0.0
             for val in p['lista_precios_vals']:
                 if float(val or 0.0) > 0:
                     base_price = float(val)
                     break
-                    
-            cod_limpio = str(p.get('default_code') or '-').strip()
-            nombre_limpio = str(p.get('name') or '')
+
+            # MEJORA 2: si el producto está en liquidación, "Ordenar por precio" usa el
+            # precio de OFERTA (no el mayorista viejo). Solo afecta el ordenamiento.
+            if p['es_liq'] and cod_limpio in PRECIOS_LIQUIDACION_EXACTOS:
+                try:
+                    base_price = float(str(PRECIOS_LIQUIDACION_EXACTOS[cod_limpio]).replace(".", "").strip())
+                except (ValueError, AttributeError):
+                    pass
 
             prod_dict = {
                 "c": cod_limpio,
@@ -257,12 +246,10 @@ def main():
                     prod_dict["p"][pl_name] = f"{int(round(precio_val)):,}".replace(",", ".") + " Gs."
                         
             productos_js.append(prod_dict)
-
         json_str = json.dumps(productos_js)
         json_images_str = json.dumps(imagenes_js)
         json_ofertas_str = json.dumps(PRECIOS_LIQUIDACION_EXACTOS)
         logo_html = f"data:image/png;base64,{logo_base64}" if logo_base64 else ""
-
         print("Generando index.html...")
         
         html = """<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Catálogo Mayorista - Camping 44</title>
@@ -281,10 +268,8 @@ def main():
                     <li class='nav-item'><button class='btn-tarifa active' data-tarifa='Todas'>👁️ Mostrar Todas</button></li>"""
         
         html = html.replace('##LOGO_HTML##', logo_html)
-
         for pl in orden_precios:
             html += f"<li class='nav-item'><button class='btn-tarifa' data-tarifa='{pl}'>💲 {pl}</button></li>"
-
         html += """</ul><hr style="border-color:#dee2e6;">
                 <h6 class='fw-bold mb-2 text-dark px-1' style='font-size:0.8rem;'>2. FILTRAR POR CATEGORÍA</h6>
                 <ul class='nav flex-column gap-1' id="listaCategoriasM">"""
@@ -292,13 +277,11 @@ def main():
         total_liq = sum(1 for p in productos_js if p["l"] == True)
         html += f"<li class='nav-item'><button class='btn-filtro active' data-filtro='Todo'>📦 Todo ({len(productos_js)})</button></li>"
         html += f"<li class='nav-item'><button class='btn-filtro' data-filtro='🔥 LIQUIDACIÓN'>🔥 LIQUIDACIÓN ({total_liq})</button></li>"
-
         for hoja in orden_hojas:
             if hoja in ["Todo", "🔥 LIQUIDACIÓN"]: continue
             pandas_clone = categorias_datos[hoja]
             if not pandas_clone: continue
             html += f"<li class='nav-item'><button class='btn-filtro' data-filtro='{hoja}'>📦 {hoja} ({len(pandas_clone)})</button></li>"
-
         html += """</ul></div></div>
         
         <div class='col-12 col-lg-10 py-3'>
@@ -313,7 +296,6 @@ def main():
                 <div class='col-12 col-md-8'><input type='text' id='buscadorWeb' class='form-control form-control-lg border-2 shadow-sm rounded-pill px-4' placeholder='🔍 Escribe para buscar...' style='font-size:1.05rem;'></div>
                 <div class='col-12 col-md-4'><select id='ordenarPor' class='form-select form-select-lg border-2 shadow-sm rounded-pill' style='font-size:1rem;'><option value='default'>⇅ Ordenar por...</option><option value='az'>🔤 A - Z (Alfabético)</option><option value='za'>🔤 Z - A (Alfabético)</option><option value='stock_desc'>📦 Mayor Stock</option><option value='stock_asc'>📦 Menor Stock</option><option value='precio_asc'>💲 Menor Precio</option><option value='precio_desc'>💲 Mayor Precio</option></select></div>
             </div>"""
-
         html += """<div class='pdf-panel shadow-sm mb-3'>
                 <div class='check-group'>
                     <span class='pdf-panel-title'>📄 DESCARGAR PDF:</span>"""
@@ -350,16 +332,17 @@ def main():
             pandas_clone = categorias_datos[hoja]
             if not pandas_clone: continue
             html += f"<li class='nav-item'><button class='btn-filtro' data-filtro='{hoja}'>📦 {hoja}</button></li>"
-
         html += """</ul></div></div>
             <div class='row row-productos g-3' id='grilla-productos' style='padding:5px;'></div>
         </div>"""
-
         footer_html = """</div></div></div><div id='print-placeholder'></div>
         <script>
             const PRODUCTOS = ##JSON_DATA##;
             const IMAGENES = ##JSON_IMAGES##;
             const OFERTAS_EXACTAS = ##JSON_OFERTAS##;
+
+            // MEJORA 3: normaliza texto para buscar SIN acentos (municion == MUNICIÓN).
+            const norm = s => (s||"").toString().toUpperCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"");
             
             let stateCat = 'Todo';
             let stateSearch = '';
@@ -369,7 +352,6 @@ def main():
             let paginaActual = 0;
             const ITEMS_POR_PAGINA = 30; 
             let selectedSKUs = new Set();
-
             function toggleProdPDF(sku, isChecked) {
                 if (isChecked) selectedSKUs.add(sku);
                 else selectedSKUs.delete(sku);
@@ -381,7 +363,6 @@ def main():
                     lbl.innerHTML = '';
                 }
             }
-
             function limpiarSeleccion() {
                 selectedSKUs.clear();
                 document.getElementById('lblSeleccionados').innerHTML = '';
@@ -389,9 +370,8 @@ def main():
                 paginaActual = 0;
                 renderizarPagina();
             }
-
             function aplicarFiltros() {
-                let q = stateSearch.toUpperCase().trim();
+                let q = norm(stateSearch).trim();
                 let ocultarAgotados = document.getElementById('chkOcultarAgotados').checked;
                 
                 productosFiltrados = PRODUCTOS.filter(p => {
@@ -401,8 +381,7 @@ def main():
                     if (stateCat === 'Todo') matchCat = true;
                     else if (stateCat === '🔥 LIQUIDACIÓN') matchCat = p.l === true;
                     else matchCat = (p.h === stateCat);
-
-                    let matchSearch = (q === '' || p.n.toUpperCase().includes(q) || p.c.toUpperCase().includes(q));
+                    let matchSearch = (q === '' || norm(p.n).includes(q) || norm(p.c).includes(q));
                     let matchTarifa = true;
                     if (stateTarifa !== 'Todas') {
                         matchTarifa = (p.p[stateTarifa] !== undefined);
@@ -421,7 +400,6 @@ def main():
                 document.getElementById('grilla-productos').innerHTML = '';
                 renderizarPagina();
             }
-
             document.getElementById('ordenarPor').addEventListener('change', function() {
                 stateSort = this.value;
                 aplicarFiltros();
@@ -429,7 +407,6 @@ def main():
             });
             
             document.getElementById('chkOcultarAgotados').addEventListener('change', aplicarFiltros);
-
             function renderizarPagina() {
                 let start = paginaActual * ITEMS_POR_PAGINA;
                 let end = start + ITEMS_POR_PAGINA;
@@ -439,7 +416,6 @@ def main():
                     document.getElementById('grilla-productos').innerHTML = '<div class="col-12 text-center py-5"><h5 class="text-muted">No se encontraron productos</h5></div>';
                     return;
                 }
-
                 let html = '';
                 items.forEach(p => {
                     let b64 = IMAGENES[p.c];
@@ -464,7 +440,6 @@ def main():
                     }
                     
                     let checkChecked = selectedSKUs.has(p.c) ? 'checked' : '';
-
                     html += `<div class='col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 tarjeta-contenedor'>
                         <div class='card card-producto shadow-sm d-flex flex-column justify-content-between'>
                             <div class='position-relative'>
@@ -495,7 +470,6 @@ def main():
                 document.getElementById('grilla-productos').insertAdjacentHTML('beforeend', html);
                 paginaActual++;
             }
-
             window.addEventListener('scroll', () => {
                 if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
                     if (paginaActual * ITEMS_POR_PAGINA < productosFiltrados.length) {
@@ -509,11 +483,9 @@ def main():
                     btn.style.display = 'none';
                 }
             });
-
             document.addEventListener("DOMContentLoaded", () => {
                 aplicarFiltros();
             });
-
             document.querySelectorAll('.btn-filtro').forEach(btn => {
                 btn.addEventListener('click', () => {
                     let val = btn.getAttribute('data-filtro');
@@ -526,7 +498,6 @@ def main():
                     window.scrollTo({top: 0});
                 });
             });
-
             document.querySelectorAll('.btn-tarifa').forEach(btn => {
                 btn.addEventListener('click', () => {
                     let val = btn.getAttribute('data-tarifa');
@@ -536,7 +507,6 @@ def main():
                     aplicarFiltros();
                 });
             });
-
             let debounceTimer;
             document.getElementById('buscadorWeb').addEventListener('input', function() {
                 clearTimeout(debounceTimer);
@@ -546,7 +516,6 @@ def main():
                     aplicarFiltros();
                 }, 300);
             });
-
             const reglasComerciales = {
                 "CROSMAN": "DIST 1: 3 Unidades o Monto Gs. 10.000.000  |  DIST 2: 6 Unidades o Monto Gs. 16.000.000",
                 "UMAREX": "DIST 1: 3 Unidades o Monto Gs. 16.000.000  |  DIST 2: 6 Unidades o Monto Gs. 25.000.000",
@@ -565,7 +534,6 @@ def main():
                 "TSS": "DIST 1: 20 Unidades o Monto Gs. 16.000.000  |  DIST 2: 50 Unidades o Monto Gs. 35.000.000",
                 "APOLO": "DIST 1: Monto Mínimo Gs. 10.000.000  |  DIST 2: Monto Mínimo Gs. 20.000.000"
             };
-
             function descargarPDFNativo() {
                 let checkboxes = document.querySelectorAll('.check-tarifa-pdf:checked');
                 let tarifasSeleccionadas = Array.from(checkboxes).map(cb => cb.value);
@@ -579,12 +547,10 @@ def main():
                     let continuar = confirm('⚠️ ATENCIÓN: Vas a descargar ' + productosFiltrados.length + ' productos.\\n\\nComo el sistema tiene que armar una tabla muy grande y pegarle las fotos adentro, puede demorar varios segundos.\\n\\n¿Deseás continuar?');
                     if (!continuar) return;
                 }
-
                 let btnPdf = document.getElementById('btnGenerarPDF');
                 let originalText = btnPdf.innerHTML;
                 btnPdf.innerHTML = '⏳ Procesando...';
                 btnPdf.disabled = true;
-
                 setTimeout(() => {
                     try {
                         const { jsPDF } = window.jspdf;
@@ -625,9 +591,7 @@ def main():
                         doc.text("Filtro: " + stateCat, 195, 16, {align: 'right'});
                         doc.setTextColor(100, 100, 100);
                         doc.text(tarifasSeleccionadas.join(" | "), 195, 22, {align: 'right'});
-
                         let startY = 35;
-
                         if (reglasComerciales[stateCat] && selectedSKUs.size === 0) {
                             doc.setFillColor(240, 253, 244);
                             doc.rect(14, 30, 181, 12, 'F');
@@ -640,21 +604,17 @@ def main():
                             doc.text("CONDICIONES (" + stateCat + "): " + reglasComerciales[stateCat], 18, 37);
                             startY = 50;
                         }
-
                         let columnas = ["Img", "Código", "Descripción"];
                         if (mostrarStock) columnas.push("Stock");
                         tarifasSeleccionadas.forEach(t => columnas.push(t));
-
                         let filas = [];
                         let skusPdf = [];
-
                         let productosParaPDF = [];
                         if (selectedSKUs.size > 0) {
                             productosParaPDF = PRODUCTOS.filter(p => selectedSKUs.has(p.c));
                         } else {
                             productosParaPDF = productosFiltrados;
                         }
-
                         productosParaPDF.forEach(p => {
                             let preciosFila = [];
                             let tienePrecio = false;
@@ -674,7 +634,6 @@ def main():
                             });
                             
                             if (!tienePrecio) return; 
-
                             let row = [];
                             row.push(""); 
                             row.push(p.c);
@@ -687,7 +646,6 @@ def main():
                             filas.push(row);
                             skusPdf.push(p.c);
                         });
-
                         doc.autoTable({
                             head: [columnas],
                             body: filas,
@@ -715,9 +673,7 @@ def main():
                                 }
                             }
                         });
-
                         doc.save("Cotizacion_Camping44_" + stateCat.replace(/[^a-zA-Z0-9]/g, "") + ".pdf");
-
                         btnPdf.innerHTML = originalText;
                         btnPdf.disabled = false;
                         
@@ -730,22 +686,18 @@ def main():
                 }, 100);
             }
         </script></body></html>"""
-
         html += footer_html.replace('##LOGO_HTML##', logo_html)
         html = html.replace('##JSON_DATA##', json_str)
         html = html.replace('##JSON_IMAGES##', json_images_str)
         html = html.replace('##JSON_OFERTAS##', json_ofertas_str)
-
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(html)
             
         peso_final = os.path.getsize("index.html") / (1024 * 1024)
         print(f"¡Catálogo VIRTUAL con Ordenamiento optimizado con éxito! Peso: {peso_final:.2f} MB")
-
     except Exception as e:
         print(f"Error general: {e}")
         traceback.print_exc()
         sys.exit(1)
-
 if __name__ == "__main__":
     main()
